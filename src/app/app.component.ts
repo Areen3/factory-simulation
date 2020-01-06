@@ -1,19 +1,12 @@
 import { Component } from '@angular/core';
+import { MessageService } from 'primeng/api';
 
 @Component({
   selector: 'app-root',
-  styles: [
-    `
-      .ui-g div {
-        background-color: #cce4f7;
-        text-align: center;
-        color: #333333;
-        border: 1px solid #e0eefa;
-      }
-    `
-  ],
-  templateUrl: './app.component.html'
+  templateUrl: './app.component.html',
+  styleUrls: ['./app.component.scss'],
+  providers: [MessageService]
 })
 export class AppComponent {
-  title = 'factory-simulation';
+  title: string = 'Factory Simulation';
 }

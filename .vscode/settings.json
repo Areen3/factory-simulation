@@ -1,0 +1,10 @@
+{
+  "typescript.format.placeOpenBraceOnNewLineForControlBlocks": true,
+  "typescriptHero.imports.insertSemicolons": true,
+  "typescriptHero.imports.multiLineTrailingComma": false,
+  "typescript.format.placeOpenBraceOnNewLineForFunctions": true,
+  "editor.formatOnSave": true,
+  "javascript.format.insertSpaceAfterSemicolonInForStatements": false,
+  "scss.completion.completePropertyWithSemicolon": false,
+  "typescript.format.insertSpaceAfterSemicolonInForStatements": false
+}

@@ -1,0 +1,22 @@
+{
+  "$schema": "../../node_modules/ng-packagr/package.schema.json",
+  "name": "@ngxs/storage-plugin",
+  "description": "extendable storage plugin for @ngxs/store",
+  "version": "0.0.0",
+  "sideEffects": true,
+  "peerDependencies": {
+    "@ngxs/store": "^0.0.0",
+    "@angular/core": ">=6.1.0 <10.0.0",
+    "rxjs": ">=6.5.4"
+  },
+  "ngPackage": {
+    "lib": {
+      "flatModuleFile": "ngxs-storage-plugin",
+      "entryFile": "index.ts",
+      "umdModuleIds": {
+        "@ngxs/store": "ngxs-store"
+      }
+    },
+    "dest": "../../@ngxs/storage-plugin"
+  }
+}

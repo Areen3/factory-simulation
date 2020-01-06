@@ -1,0 +1,62 @@
+<h3>Select product <i class="pi pi-check-square" style="vertical-align: middle;"></i></h3>
+<div class="ui-g">
+  <div class="ui-g-12">
+    <div class="ui-g-10">
+      <p-dropdown
+        [options]="products$ | async"
+        [(ngModel)]="selectedProduct"
+        placeholder="Select a product"
+        optionLabel="name"
+        [style]="{ width: '100%' }"
+      ></p-dropdown>
+    </div>
+    <div class="ui-g-1">
+      <p-button
+        label="Update"
+        icon="pi pi-spin pi-refresh"
+        iconPos="right"
+        class="max"
+        styleClass=".ui-button-warning max"
+        class="ui-button-info"
+        (click)="updateClick()"
+      ></p-button>
+    </div>
+    <div class="ui-g-1">
+      <p-checkbox name="active" label="Active" value="selectedProduct.active"></p-checkbox>
+    </div>
+    <div class="ui-g-12">
+      <div class="all" *ngIf="selectedProduct">
+        <table>
+          <tr>
+            <th>Name</th>
+            <th>Cost Price</th>
+            <th>Price</th>
+            <th>Start Up Cost</th>
+            <th>Max Production</th>
+            <th>Product one</th>
+            <th>Employment Volume</th>
+            <th>Product Id</th>
+          </tr>
+          <tr>
+            <td><input type="text" pInputText placeholder="name" [(ngModel)]="selectedProduct.name" /></td>
+            <td><input type="number" pInputText placeholder="costForOneTick" [(ngModel)]="selectedProduct.costForOneTick" /></td>
+            <td><input type="number" pInputText placeholder="price" [(ngModel)]="selectedProduct.price" /></td>
+            <td>
+              <input
+                type="number"
+                pInputText
+                placeholder="numberOfParallelProduction"
+                [(ngModel)]="selectedProduct.numberOfParallelProduction"
+              />
+            </td>
+            <td>
+              <input type="number" pInputText placeholder="tickToProduceOneElement" [(ngModel)]="selectedProduct.tickToProduceOneElement" />
+            </td>
+            <td><input type="number" pInputText placeholder="employmentVolume" [(ngModel)]="selectedProduct.employmentVolume" /></td>
+            <td><input type="number" pInputText placeholder="productId" [(ngModel)]="selectedProduct.productId" /></td>
+          </tr>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

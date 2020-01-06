@@ -1,16 +1,19 @@
-<h3 class="first">Factory simulation</h3>
+<p-toast [style]="{ marginTop: '80px' }" position="top-center" key="tc"></p-toast>
 <div class="ui-g">
-  <div class="ui-g-2">2</div>
-  <div class="ui-g-10">10</div>
+  <div class="ui-g-12 header">
+    <h1 class="first">{{ title }}<i class="pi pi-spin pi-cog" style="margin-left: 5px;"></i></h1>
+  </div>
 </div>
 
-tutaj panel z departamentami
+<div class="ui-g control">
+  <div class="ui-g-4"><app-life-cycle></app-life-cycle></div>
+  <div class="ui-g-8"><app-product></app-product></div>
+</div>
 
-<div class="ui-g">
-  <div class="ui-g-4">4</div>
-  <div class="ui-g-4">4</div>
-  <div class="ui-g-4">4</div>
-  <div class="ui-g-4">4</div>
-  <div class="ui-g-4">4</div>
-  <div class="ui-g-4">4</div>
+<app-world></app-world>
+<div class="ui-g chart">
+  <div class="ui-g-4 chart__box"><app-market-demand></app-market-demand></div>
+  <div class="ui-g-4 chart__box"><app-offer-history></app-offer-history></div>
+  <div class="ui-g-4 chart__box"><app-order-history></app-order-history></div>
+  <div class="ui-g-4 chart__box"><app-firm-finance></app-firm-finance></div>
 </div>

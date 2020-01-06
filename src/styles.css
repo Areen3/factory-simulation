@@ -1,0 +1,19 @@
+/* You can add global styles to this file, and also import other style files */
+
+body {
+  margin: 0px;
+}
+
+.max {
+  width: 100%;
+  display: block !important;
+}
+
+.ui-chkbox {
+  margin-top: 5px !important;
+  height: 24px !important;
+}
+
+.wrap {
+  background-color: #bae8e8;
+}

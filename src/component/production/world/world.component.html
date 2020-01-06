@@ -1,0 +1,9 @@
+<div class="ui-g panel">
+  <ng-container *ngFor="let containent of containents$ | async | keyvalue">
+    <ng-container *ngIf="containent.value.localization === 'Africa'">
+      <div class="ui-g-4 panel__card">
+        <app-continent [continent]="containent.value"></app-continent>
+      </div>
+    </ng-container>
+  </ng-container>
+</div>
