@@ -1,27 +1,22 @@
 .all {
-  margin-top: 10px;
+  .ui-inputgroup {
+    margin-top: 10px;
+    padding-bottom: 5px;
+    width: 100%;
+  }
+  .ui-inputgroup-addon {
+    background-color: #272343;
+    color: white;
+    border-color: #000;
+    font-size: 0.7em;
+  }
+  span {
+    width: 40%;
+  }
   input {
-    width: 138px;
-    height: 30px;
+    width: 60%;
   }
 }
 .ui-chkbox {
   margin-top: 5px !important;
-}
-
-table {
-  font-family: arial, sans-serif;
-  border-collapse: collapse;
-  width: 100%;
-}
-
-td,
-th {
-  border: 1px solid #dddddd;
-  text-align: left;
-  padding: 8px;
-}
-
-tr:nth-child(even) {
-  background-color: #dddddd;
 }

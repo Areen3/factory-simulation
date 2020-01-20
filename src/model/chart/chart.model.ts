@@ -1,15 +1,21 @@
 export interface IChartDataSetItem<T> {
-  label: string;
-  data: Array<T>;
-  fill: boolean;
-  borderColor: string;
+  name: string;
+  value: T;
 }
 
 export interface IAbstractCharModel<T> {
-  labels: Array<string>;
-  datasets: Array<IChartDataSetItem<T>>;
+  name: string;
+  series: Array<IChartDataSetItem<T>>;
 }
-export interface ILineChartModel extends IAbstractCharModel<number> {}
+
+export interface IAbstractNgxChartModel<T> {
+  name: string;
+  value: T;
+}
+export interface ILineChartItem extends IAbstractCharModel<number> {}
+export type TLineChartModel = Array<ILineChartItem>;
+export interface IAdvancedPipeChartModel extends IAbstractNgxChartModel<number> {}
+export interface ITreeMapChartModel extends IAbstractNgxChartModel<number> {}
 export enum EChartLegendPosition {
   bottom = 'bottom',
   top = 'top',

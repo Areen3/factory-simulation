@@ -49,17 +49,12 @@ export class OrderState extends BaseState<fromModel.IOrderModel> {
     ctx.patchState({ orders: { ...state.orders, ...partialMade } });
   }
   @Action(fromModel.SaleScheduleAction.NewOrder)
-  newOrder(ctx: StateContext<fromModel.IOrderModel>, action: fromModel.SaleScheduleAction.NewOrder): void {
+  newOrder(ctx: StateContext<fromModel.IOrderModel>, action: fromModel.SaleScheduleAction.NewOrder): any {
     const state = ctx.getState();
     const orders: fromModel.TIndexOrderType = action.payload.orders.reduce((acc, curr) => ({ ...acc, [curr.orderId]: curr }), {});
     const newOrders: fromModel.TIndexOrderType = {
       ...Object.values(state.orders)
-        .filter(
-          item =>
-            item.status === fromModel.EOrderStatus.inProgress ||
-            item.status === fromModel.EOrderStatus.finished ||
-            (item.status === fromModel.EOrderStatus.new && action.payload.tick <= item.tick + 1000)
-        )
+        .filter(item => item.status === fromModel.EOrderStatus.inProgress || item.status === fromModel.EOrderStatus.new)
         .reduce((acc: fromModel.TIndexOrderType, curr: fromModel.IOrder) => ({ ...acc, ...{ [curr.orderId]: curr } }), {}),
       ...orders
     };
@@ -67,7 +62,7 @@ export class OrderState extends BaseState<fromModel.IOrderModel> {
       orders: newOrders,
       rates: { ...state.rates, new: state.rates.new + 1 }
     });
-    ctx.dispatch(new fromModel.SaleScheduleAction.NewOrderAdded(action.payload.orders));
+    return ctx.dispatch(new fromModel.SaleScheduleAction.NewOrderAdded(action.payload.orders));
   }
   @Action(fromModel.SaleScheduleAction.FinishOrder)
   finishOrder(ctx: StateContext<fromModel.IOrderModel>, action: fromModel.SaleScheduleAction.FinishOrder): void {

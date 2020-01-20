@@ -19,7 +19,8 @@ export const initialBaseLineDataModel: fromModel.IBaseProductionLineModel = {
   freeCapacity: 0,
   numberOfParallelProduction: 0,
   departamentId: '',
-  production: {}
+  production: {},
+  ticksWithoutOrders: 0
 };
 
 @State<fromModel.IBaseProductionLineModel>({
@@ -54,10 +55,10 @@ export class BaseLineProductionState<T extends fromModel.IBaseProductionLineMode
   static freeCapacity$(state: fromModel.IBaseProductionLineModel): number {
     return state.freeCapacity;
   }
-  @Action(fromModel.ProductionAction.InitLindeProductionData)
-  initLindeProductionData(
+  @Action(fromModel.ProductionAction.InitLineProductionData)
+  initLineProductionData(
     ctx: StateContext<fromModel.IBaseProductionLineModel>,
-    action: fromModel.ProductionAction.InitLindeProductionData
+    action: fromModel.ProductionAction.InitLineProductionData
   ): void {
     const state = ctx.getState();
     const {
@@ -66,23 +67,40 @@ export class BaseLineProductionState<T extends fromModel.IBaseProductionLineMode
       numberOfParallelProduction,
       departamentId
     }: fromModel.ProductionAction.ILineProductionDataAction = action.payload;
-    ctx.patchState({ lineId, productId, numberOfParallelProduction, departamentId, freeCapacity: state.productionCapacity });
+    ctx.patchState({ lineId, productId, numberOfParallelProduction, departamentId, productionCapacity: state.productionCapacity });
+  }
+  @Action(fromModel.ProductAction.NumberOfParallelProduction)
+  numberOfParallelProduction(
+    ctx: StateContext<fromModel.IBaseProductionLineModel>,
+    action: fromModel.ProductAction.NumberOfParallelProduction
+  ): void {
+    const state = ctx.getState();
+    if (state.productId === action.payload.productId || action.payload.productId === -1) {
+      ctx.patchState({ numberOfParallelProduction: action.payload.numberOfParallelProduction });
+    }
+  }
+  @Action(fromModel.ProductAction.BufferChange)
+  bufferChange(ctx: StateContext<fromModel.IBaseProductionLineModel>, action: fromModel.ProductAction.BufferChange): any {
+    this.innerBufferChange(ctx, action.payload);
   }
   @Action(fromModel.ProductionAction.AddOrderToQueueProduction)
-  addOrderToQueueEmployment(
+  addOrderToQueueProduction(
     ctx: StateContext<fromModel.IBaseProductionLineModel>,
     action: fromModel.ProductionAction.AddOrderToQueueProduction
   ): void {
     const state = ctx.getState();
     const newElementToProduce: fromModel.TInProduceOnTheLineIndex = action.payload.orders
       .map(item => {
+        // const randomCases = fromModel.getRandomRange(0, 2);
+        const randomCases = 0;
         const result: fromModel.IInProduceOnTheLine = {
           actualProgressTick: 0,
-          tickRemaind: action.payload.product.tickToProduceOneElement * item.quantityPlanned,
+          tickRemaind: (action.payload.product.tickToProduceOneElement + randomCases) * item.quantityPlanned,
           tickTaken: 0,
           orderId: item.orderId,
           lineId: state.lineId,
-          tickToProduceOneElement: action.payload.product.tickToProduceOneElement
+          orderCleared: false,
+          tickToProduceOneElement: action.payload.product.tickToProduceOneElement + randomCases
         };
         return result;
       })
@@ -108,10 +126,22 @@ export class BaseLineProductionState<T extends fromModel.IBaseProductionLineMode
       freeCapacity: state.productionCapacity - Object.keys(itemLeaved).length
     });
   }
-  @Action(fromModel.ProductionAction.ProcessOneTick)
-  processOneTick(ctx: StateContext<fromModel.IBaseProductionLineModel>, action: fromModel.ProductionAction.ProcessOneTick): void {
+  @Action(fromModel.ProductionAction.ClearOrderInProduce)
+  clearOrderInProduce(ctx: StateContext<fromModel.IBaseProductionLineModel>, action: fromModel.ProductionAction.ClearOrderInProduce): void {
     const state = ctx.getState();
-    const processedItems: fromModel.TInProduceOnTheLineIndex = Object.values(state.production)
+    const productionWithClose = Object.values(state.production)
+      .filter(item => action.payload.find(elem => elem === item.orderId))
+      .map((item): fromModel.IInProduceOnTheLine => ({ ...item, orderCleared: true }))
+      .reduce((acc, curr) => ({ ...acc, [curr.orderId]: curr }), {});
+    ctx.patchState({ production: { ...state.production, ...productionWithClose } });
+  }
+  @Action(fromModel.ProductionAction.ProcessOneTick)
+  processOneTick(ctx: StateContext<fromModel.IBaseProductionLineModel>, action: fromModel.ProductionAction.ProcessOneTick): any {
+    const state = ctx.getState();
+    const prductArray = Object.values(state.production);
+    const tickWithoutOrders = prductArray.length > 0 ? 0 : state.ticksWithoutOrders + 1;
+
+    const processedItems: fromModel.TInProduceOnTheLineIndex = prductArray
       .sort((a, b) => b.tickTaken - a.tickTaken)
       .slice(0, state.numberOfParallelProduction)
       .map(item => {
@@ -129,14 +159,19 @@ export class BaseLineProductionState<T extends fromModel.IBaseProductionLineMode
           return { made: count, orderId: item.orderId };
         }
       );
-    if (partialMade.length > 0) {
-      ctx.dispatch(new fromModel.SaleScheduleAction.NewElementInOrderFinish(partialMade));
-    }
+
     const newStateProduce = { ...state.production, ...processedItems };
     ctx.patchState({
       production: newStateProduce,
+      ticksWithoutOrders: tickWithoutOrders,
       freeCapacity: state.productionCapacity - Object.keys(newStateProduce).length
     });
+    const actionToSent = [];
+    if (partialMade.length > 0) actionToSent.push(ctx.dispatch(new fromModel.SaleScheduleAction.NewElementInOrderFinish(partialMade)));
+    if (tickWithoutOrders > 10) {
+      actionToSent.push(this.store.dispatch(new fromModel.ProductionAction.RemoveLineFromProduction(state.lineId)));
+    }
+    if (actionToSent.length !== 0) return this.store.dispatch(actionToSent);
   }
 
   ngxsOnDestory(): void {
@@ -144,7 +179,9 @@ export class BaseLineProductionState<T extends fromModel.IBaseProductionLineMode
     this.destroy$.complete();
   }
   protected processOrders(kind: fromModel.EProductKind): void {
+    // return;
     if (this.processOrdersRun) return;
+    console.log('line run ' + kind);
     this.processOrdersRun = true;
     const run$: Observable<boolean> = this.store.select(TickGeneratorState.run$);
     run$
@@ -154,19 +191,20 @@ export class BaseLineProductionState<T extends fromModel.IBaseProductionLineMode
         ofActionSuccessful(fromModel.TickAction.Tick),
         map((tick: fromModel.TickAction.Tick) => tick.payload),
         switchMap(tick => this.processOneTickOnLines(tick, kind)),
-        map(([tick, products, prodMenagmentState]): {
+        map(([tick, products]): {
           tick: number;
           products: fromModel.TProductIndex;
-          prodMenagmentState: fromModel.IProductionManagmentModel;
-        } => ({ tick, products, prodMenagmentState })),
-        switchMap(({ tick, products, prodMenagmentState }) => this.updateFinaneAfterTick(tick, products, prodMenagmentState, kind)),
-        map(([tick, products, lines, prodMenagmentState]): {
+        } => ({ tick, products })),
+        switchMap(({ tick, products }) => this.updateFinanseAfterTick(tick, products, kind)),
+        map(([tick, products, lines]): {
           tick: number;
           products: fromModel.TProductIndex;
           lines: Array<fromModel.IBaseProductionLineModel>;
-          prodMenagmentState: fromModel.IProductionManagmentModel;
-        } => ({ tick, products, lines, prodMenagmentState })),
-        switchMap(({ lines, prodMenagmentState }) => {
+        } => ({ tick, products, lines })),
+        switchMap(({ lines }) => {
+          const prodMenagmentState = <fromModel.IProductionManagmentModel>(
+            this.store.selectSnapshotInContext(BaseState.state$, SingleLocation.getLocation(fromModel.EStateName.productionManagmentState))
+          );
           const orders = reorganiseOrdersAfterTick(prodMenagmentState, lines);
           const ordersIndex = this.store.selectSnapshot(OrderState.orders$);
           const offersToFinish = orders.flatMap(order => order.finishedOrders.map((item: fromModel.TOrderId) => ordersIndex[item].offerId));
@@ -196,34 +234,36 @@ export class BaseLineProductionState<T extends fromModel.IBaseProductionLineMode
     const actionToSend = prodMenagmentState.productionLineLocalizations
       .filter(line => products[line.productId].productKind === kind)
       .map(line => {
-        return this.store.dispatchInLocation(new fromModel.ProductionAction.ProcessOneTick({ tick }), line.localization);
+        return this.store.dispatchInLocation(new fromModel.ProductionAction.ProcessOneTick({ tick }), line.location);
       });
-    return combineLatest([of(tick), of(products), of(prodMenagmentState), ...actionToSend]);
+    return combineLatest([of(tick), of(products), ...actionToSend]);
   }
-  private updateFinaneAfterTick(
-    tick: number,
-    products: fromModel.TProductIndex,
-    prodMenagmentState: fromModel.IProductionManagmentModel,
-    kind: fromModel.EProductKind
-  ): Observable<any> {
+  private updateFinanseAfterTick(tick: number, products: fromModel.TProductIndex, kind: fromModel.EProductKind): Observable<any> {
     const locStaff = this.store.getStateLocationByStateClass(StaffState);
     const staff: fromModel.IStaffModel = this.store.selectSnapshotInContext(StaffState.state$, locStaff);
+    const prodMenagmentState = <fromModel.IProductionManagmentModel>(
+      this.store.selectSnapshotInContext(BaseState.state$, SingleLocation.getLocation(fromModel.EStateName.productionManagmentState))
+    );
     const lines: Array<fromModel.IBaseProductionLineModel> = prodMenagmentState.productionLineLocalizations
       .filter(line => products[line.productId].productKind === kind)
-      .map(line => this.store.selectSnapshotInContext(BaseLineProductionState.state$, line.localization));
+      .map(line => this.store.selectSnapshotInContext(BaseLineProductionState.state$, line.location));
     const departaments = prodMenagmentState.departamentLocalizations
       .filter(dep => lines.find(line => line.departamentId === dep.departamentId))
       .map(dep => this.store.selectSnapshotInContext(DepartamentState.state$, dep.localization));
-    const actons = getDataToCalculateFinance(kind, prodMenagmentState, lines, departaments, products, staff);
-    this.store.dispatch([
-      new fromModel.CompanyMenagmentAction.AddCostFromLine(actons.costArray),
-      new fromModel.CompanyMenagmentAction.AddSaleFromLine(actons.saleArray)
-    ]);
-    return combineLatest([of(tick), of(products), of(lines), of(prodMenagmentState)])
-      .pipe
-      // tap(xxx => {
-      //   // console.log('po aktualizacji finansów', xxx);
-      // })
-      ();
+    const actual = getDataToCalculateFinance(kind, prodMenagmentState, lines, departaments, products, staff);
+    if (actual.costArray.length !== 0) this.store.dispatch(new fromModel.CompanyMenagmentAction.AddCostFromLine(actual.costArray));
+    if (actual.saleArray.length !== 0) this.store.dispatch(new fromModel.CompanyMenagmentAction.AddSaleFromLine(actual.saleArray));
+
+    const lineToClearOrders = actual.saleArray.map(line =>
+      this.store.dispatchInLocation(
+        new fromModel.ProductionAction.ClearOrderInProduce(actual.saleArray.map(item => item.orderId)),
+        line.location
+      )
+    );
+    return combineLatest([of(tick), of(products), of(lines), ...lineToClearOrders]);
+  }
+  protected innerBufferChange(_ctx: StateContext<fromModel.IBaseProductionLineModel>, _data: fromModel.ProductAction.IBufferChange): any {}
+  protected updateCapacity(ctx: StateContext<fromModel.IBaseProductionLineModel>, capacity: number): void {
+    ctx.patchState({ productionCapacity: capacity });
   }
 }

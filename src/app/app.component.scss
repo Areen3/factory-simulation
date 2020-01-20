@@ -18,11 +18,33 @@
   }
 }
 
+.chart {
+  margin-top: 6px;
+}
+
 .chart__box {
   background-color: #bae8e8;
   background-color: #e3f6f5;
+  padding: 2px 2px !important;
 }
 
 .control {
-  background-color: #ffffff;
+  background-color: #f7f7f7;
+  * {
+    padding: 0 !important;
+  }
+}
+
+.ui-slider {
+  margin-top: 10px;
+}
+
+.card__white {
+  background-color: white;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

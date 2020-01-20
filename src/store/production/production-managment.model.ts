@@ -12,12 +12,13 @@ export enum EWhatShoudDoWithOffer {
 export interface IWhatShoudDoWithOffer {
   whatDo: EWhatShoudDoWithOffer;
   localization: SingleLocation;
+  continent: fromModel.EContinent;
   lineProductionId: fromModel.TLineProductionId;
   departementId: fromModel.TDepartamentId;
   offer: fromModel.IOffer;
 }
-export interface IDataConfition {
-  lines: fromModel.TProductionLineDescription;
+export interface IDataConfiguration {
+  lines: fromModel.TProductionLineLocalization;
   dep: fromModel.TDepartamentLocalizations;
   conditions: fromModel.TContainentsIndex;
 }
@@ -25,4 +26,16 @@ export interface IDataConfition {
 export interface IIsPosibilityToMake {
   posibiliyt: boolean;
   location: SingleLocation;
+}
+export interface IDoWithNewDepartament {
+  isPosibility: boolean;
+  continent?: fromModel.EContinent;
+}
+export interface IDoWithNewLine {
+  isPosibility: boolean;
+  dep?: fromModel.IDepartamentDescription;
+}
+export interface IDoWithLine {
+  isPosibility: boolean;
+  lineDescription?: fromModel.ILineDescription;
 }

@@ -131,7 +131,7 @@
     "no-empty": [true, "allow-empty-catch", "allow-empty-functions"],
     "no-floating-promises": false,
     "no-for-in-array": true,
-    "no-implicit-dependencies": [true, ["src", "app", "@angular", "primeng", "@ngxs", "rxjs", "lodash", "deepcopy"]],
+    "no-implicit-dependencies": [true, ["src", "app", "@angular", "primeng", "@ngxs", "rxjs", "lodash", "deepcopy", "rxjs-spy"]],
     "no-inferred-empty-object-type": false,
     "no-invalid-template-strings": true,
     "no-invalid-this": true,

@@ -1,0 +1,67 @@
+<h3 class="header__border">Change continent data <i class="pi pi-globe"></i></h3>
+<p-card>
+  <div class="ui-g center" *ngIf="!(ekspertMode$ | async)" style="height: 118px !important;">
+    <div class="ui-g-12 box__reset">
+      <span>Max dep. count: {{maxDepartaments}}</span>
+      <p-slider [ngModel]="maxDepartaments" [min]="0" [max]="10" [step]="1" (onChange)="allDepartamentsChange($event)"></p-slider>
+      <span>Max lines: {{maxLinesPerDepartament}}</span>
+      <p-slider [ngModel]="maxLinesPerDepartament" [min]="1" [max]="10" [step]="1" (onChange)="allLines($event)"></p-slider>
+    </div>
+  </div>
+  <div class="continent_wrapper" *ngIf="ekspertMode$ | async">
+    <ng-container *ngFor="let containent of containents$ | async | keyvalue">
+      <div class="ui-g">
+        <div class="ui-g-12">
+          <div class="continent__box">
+            <div class="ui-g-2">
+              <p>{{ containent.value.localization }}</p>
+            </div>
+            <div class="ui-g-3 box__reset">
+              <span>Salary modifier: {{containent.value.salaryModifier}}</span>
+              <p-slider
+                [ngModel]="containent.value.salaryModifier"
+                [min]="0.1"
+                [max]="2"
+                [step]="0.1"
+                (onSlideEnd)="salaryModifierChange($event, containent.value)"
+              ></p-slider>
+            </div>
+            <div class="ui-g-3 box__reset">
+              <span>Max dep. count: {{containent.value.maxDepartaments}}</span>
+              <p-slider
+                [ngModel]="containent.value.maxDepartaments"
+                [min]="0"
+                [max]="10"
+                [step]="1"
+                (onSlideEnd)="maxDepartamentsChange($event, containent.value)"
+              ></p-slider>
+            </div>
+            <div class="ui-g-2 box__reset">
+              <span>Max lines: {{containent.value.maxLinesPerDepartament}}</span>
+              <p-slider
+                [ngModel]="containent.value.maxLinesPerDepartament"
+                [min]="1"
+                [max]="10"
+                [step]="1"
+                (onSlideEnd)="maxLinesPerDepartamentChange($event, containent.value)"
+              ></p-slider>
+            </div>
+            <div class="ui-g-2 box__reset all">
+              <div class="ui-inputgroup">
+                <span class="ui-inputgroup-addon">StartCost</span>
+                <input
+                  type="number"
+                  style="width: 50%;"
+                  pInputText
+                  placeholder="start up cost"
+                  (change)="departamentStartUpCostChange($event, containent.value)"
+                  [(ngModel)]="containent.value.departamentStartUpCost"
+                />
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </ng-container>
+  </div>
+</p-card>

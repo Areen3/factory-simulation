@@ -15,6 +15,7 @@ export interface IFirmModel {
   actualCosts: number;
   actualProfits: number;
   actualSale: number;
+  expertMode: boolean;
   financeHistory: TFinanceHistoryArray;
 }
 

@@ -58,15 +58,15 @@ export const setValue = (obj: any, prop: string, val: any) => {
  *
  * @ignore
  */
-export const getValue = (obj: any, prop: string): any =>
-  prop.split('.').reduce((acc: any, part: string) => acc && acc[part], obj);
+export const getValue = (obj: any, prop: string): any => prop.split('.').reduce((acc: any, part: string) => acc && acc[part], obj);
 
 export function removeLastValue(obj: any, prop: string) {
   obj = { ...obj };
   const split = prop.split('.');
   const lastIndex = split.length - 1;
-  return split.reduce((acc, part, index) => {
+  split.reduce((acc, part, index) => {
     index === lastIndex ? delete acc[part] : (acc[part] = { ...acc[part] });
     return acc && acc[part];
   }, obj);
+  return obj;
 }

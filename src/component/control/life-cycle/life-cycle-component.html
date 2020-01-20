@@ -1,53 +1,91 @@
-<h3>Control Panel <i class="pi pi-sliders-v"></i></h3>
-<div class="ui-g">
-  <div class="ui-g-12">
-    <div class="ui-g-4">
-      <p-button
-        label="Start"
-        icon="pi pi-play"
-        iconPos="right"
-        class="max"
-        styleClass="ui-button-success max"
-        (click)="startClick()"
-        [disabled]="run$ | async"
-      ></p-button>
-    </div>
-    <div class="ui-g-4">
-      <p-button
-        label="Pause"
-        icon="pi pi-pause"
-        iconPos="right"
-        class="max"
-        styleClass="ui-button-info max"
-        (click)="pauseClick()"
-        [disabled]="!(run$ | async)"
-      ></p-button>
-    </div>
-    <div class="ui-g-4">
-      <p-button
-        label="New buisness"
-        icon="pi pi-plus"
-        iconPos="right"
-        class="max"
-        styleClass="ui-button-secondary max"
-        (click)="newBuisenssClick()"
-        [disabled]="run$ | async"
-      ></p-button>
+<h3 class="header__border">Control panel <i class="pi pi-sliders-v"></i></h3>
+<p-card>
+  <div class="ui-g">
+    <div class="ui-g-12">
+      <div class="ui-g-3">
+        <p-button
+          label="Start"
+          icon="pi pi-play"
+          iconPos="right"
+          class="max"
+          styleClass="ui-button-success max"
+          (click)="startClick()"
+          [disabled]="run$ | async"
+        ></p-button>
+      </div>
+      <div class="ui-g-3">
+        <p-button
+          label="Pause"
+          icon="pi pi-pause"
+          iconPos="right"
+          class="max"
+          styleClass="ui-button-info max"
+          (click)="pauseClick()"
+          [disabled]="!(run$ | async)"
+        ></p-button>
+      </div>
+      <div class="ui-g-3">
+        <p-button
+          label="New buisness"
+          class="max"
+          styleClass="ui-button-secondary max"
+          (click)="newBuisenssClick()"
+          [disabled]="run$ | async"
+        ></p-button>
+      </div>
+      <div class="ui-g-3">
+        <p-checkbox label="Expert Mode" [ngModel]="ekspertMode$ | async" (onChange)="changeExpertMode($event)" binary="true"></p-checkbox>
+      </div>
     </div>
   </div>
-  <div class="ui-g-12">
-    <span>Time Speed</span>
-    <input type="text" pInputText [ngModel]="timeSpeed" [disabled]="true" style="width:100%" />
-    <p-slider [ngModel]="timeSpeed" [min]="10" [max]="2000" [step]="10" (onChange)="timeChange($event)"></p-slider>
+  <div class="ui-g" *ngIf="!(ekspertMode$ | async)">
+    <div class="ui-g-12 reset">
+      <span>Time Speed: {{timeSpeed}}</span>
+      <p-slider [(ngModel)]="timeSpeed" [min]="10" [max]="2000" [step]="10" (onSlideEnd)="timeChange($event)"></p-slider>
+      <span>Budget start: {{budgetStart}}</span>
+      <p-slider [(ngModel)]="budgetStart" [min]="5000" [max]="10000000" [step]="1000" (onSlideEnd)="budgetChange($event)"></p-slider>
+    </div>
   </div>
-</div>
-<div class="ui-g-12">
-  <span>Percentage of salary%</span>
-  <input type="text" pInputText [ngModel]="salary" [disabled]="true" style="width:100%" />
-  <p-slider [ngModel]="salary" [min]="1" [max]="100" (onChange)="salaryChange($event)"></p-slider>
-</div>
-<div class="ui-g-12">
-  <span>Sales margin%</span>
-  <input type="text" pInputText [ngModel]="sales" [disabled]="true" style="width:100%" />
-  <p-slider [ngModel]="sales" [min]="1" [max]="100" (onChange)="marginChange($event)"></p-slider>
-</div>
+  <div class="ui-g" *ngIf="ekspertMode$ | async" style="height: 194px !important;">
+    <div class="ui-g-6">
+      <div class="ui-g-12">
+        <span>Time Speed: {{timeSpeed}}</span>
+        <p-slider [ngModel]="timeSpeed" [min]="10" [max]="2000" [step]="10" (onSlideEnd)="timeChange($event)"></p-slider>
+      </div>
+      <div class="ui-g-12">
+        <span>Budget start: {{budgetStart}}</span>
+        <p-slider [ngModel]="budgetStart" [min]="5000" [max]="10000000" [step]="1000" (onSlideEnd)="budgetChange($event)"></p-slider>
+      </div>
+    </div>
+    <div class="ui-g-6">
+      <div class="ui-g-12">
+        <span>Moticycle buffer production: {{(buffer$ | async)[eProductKind.motorcycle]}}</span>
+        <p-slider
+          [ngModel]="(buffer$ | async)[eProductKind.motorcycle]"
+          [min]="1"
+          [max]="100"
+          (onSlideEnd)="bufferChange($event, eProductKind.motorcycle)"
+        ></p-slider>
+      </div>
+      <div class="ui-g-12">
+        <span>Car buffer production:: {{(buffer$ | async)[eProductKind.car]}}</span>
+        <p-slider
+          #car
+          [ngModel]="(buffer$ | async)[eProductKind.car]"
+          [min]="1"
+          [max]="100"
+          (onSlideEnd)="bufferChange($event, eProductKind.car)"
+        ></p-slider>
+      </div>
+      <div class="ui-g-12">
+        <span>Van buffer production:: {{(buffer$ | async)[eProductKind.van]}}</span>
+        <p-slider
+          [ngModel]="(buffer$ | async)[eProductKind.van]"
+          [min]="1"
+          [max]="100"
+          (onSlideEnd)="bufferChange($event, eProductKind.van)"
+        ></p-slider>
+      </div>
+    </div>
+  </div>
+</p-card>

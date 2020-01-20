@@ -5,13 +5,13 @@ import { IIndexStringType, TDepartamentId, TLineProductionId, TOrderId, TProduct
 export enum EContinent {
   europe = 'Europe',
   asia = 'Asia',
-  northAmerica = 'NorthAmerica',
-  southAmerica = 'SouthAmerica',
+  northAmerica = 'North America',
+  southAmerica = 'South America',
   africa = 'Africa',
   oceania = 'Oceania'
 }
 export interface ILineDescription {
-  localization: SingleLocation;
+  location: SingleLocation;
   productId: TProductId;
   lineId: TLineProductionId;
   departamentId: TDepartamentId;
@@ -30,12 +30,13 @@ export interface IContainent {
   departamentStartUpCost: number;
 }
 
-export type TProductionLineDescription = Array<ILineDescription>;
+export type TProductionLineLocalization = Array<ILineDescription>;
 export type TDepartamentLocalizations = Array<IDepartamentDescription>;
 export type TContainentsIndex = IIndexStringType<IContainent>;
+export type TContainentsArray = Array<IContainent>;
 export interface IProductionManagmentModel {
   departamentLocalizations: TDepartamentLocalizations;
-  productionLineLocalizations: TProductionLineDescription;
+  productionLineLocalizations: TProductionLineLocalization;
   locationConditions: TContainentsIndex;
   lastDepartamentId: number;
   lastLineId: number;
@@ -47,6 +48,7 @@ export interface IInProduceOnTheLine {
   lineId: TLineProductionId;
   tickTaken: number;
   tickRemaind: number;
+  orderCleared: boolean;
 }
 
 export type TInProduceOnTheLineIndex = IIndexStringType<IInProduceOnTheLine>;
@@ -58,6 +60,7 @@ export interface IBaseProductionLineModel {
   numberOfParallelProduction: number;
   production: TInProduceOnTheLineIndex;
   departamentId: TDepartamentId;
+  ticksWithoutOrders: number;
 }
 export interface IMotocycleProductionLineModel extends IBaseProductionLineModel {}
 export interface ICarProductionLineModel extends IBaseProductionLineModel {}

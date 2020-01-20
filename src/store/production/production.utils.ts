@@ -1,7 +1,7 @@
 import { SingleLocation } from '@ngxs/store';
 
 import * as fromModel from '../../model';
-import { EWhatShoudDoWithOffer, IDataConfition, IWhatShoudDoWithOffer } from './production-managment.model';
+import { EWhatShoudDoWithOffer, IDataConfiguration, IWhatShoudDoWithOffer } from './production-managment.model';
 
 export function findChipestDepartament(locationConditions: fromModel.IIndexStringType<fromModel.IContainent>): fromModel.IContainent {
   const depCondition = Object.values(locationConditions)
@@ -13,8 +13,8 @@ export function findChipestDepartament(locationConditions: fromModel.IIndexStrin
 export function findLinesWithChipestOrder(
   offer: fromModel.IOffer,
   departaments: Array<fromModel.IDepartamentModel>,
-  data: IDataConfition
-): fromModel.TProductionLineDescription {
+  data: IDataConfiguration
+): fromModel.TProductionLineLocalization {
   return data.lines
     .filter(line => line.productId === offer.productId)
     .map(line => {
@@ -43,7 +43,7 @@ export function getDataToCalculateFinance(
       const product = products[line.productId];
       const departament = departaments.find(dep => dep.departamentId === line.departamentId);
       const produceInProgress = Object.values(line.production)
-        .filter(inProduce => inProduce.tickTaken > 0 && inProduce.tickRemaind !== 0)
+        .filter(inProduce => inProduce.tickTaken > 0 && !inProduce.orderCleared)
         .map(inProduce => {
           const cost: fromModel.CompanyMenagmentAction.IAddCostFromLineData = {
             costProduction: product.costForOneTick,
@@ -59,10 +59,13 @@ export function getDataToCalculateFinance(
         .filter(inProduce => inProduce.tickRemaind === 0)
         .map(inProduce => {
           const cost: fromModel.CompanyMenagmentAction.IAddSaleFromLineData = {
-            sale: product.price,
+            sale: product.price * Math.floor(inProduce.tickTaken / inProduce.tickToProduceOneElement),
             lineId: line.lineId,
+            product: product.name,
+            containent: departament!.continent,
             orderId: inProduce.orderId,
-            tick: inProduce.actualProgressTick
+            tick: inProduce.actualProgressTick,
+            location: productionManagment.productionLineLocalizations.find(item => item.lineId === line.lineId)!.location
           };
           return cost;
         });
@@ -104,7 +107,7 @@ export function reorganiseOrdersAfterTick(
         finishedOrders: ordersClosed,
         startedOrders: ordersStarted,
         lineId: line.lineId,
-        localization: prodMenagmentState.productionLineLocalizations.find(item => item.lineId === line.lineId)!.localization,
+        localization: prodMenagmentState.productionLineLocalizations.find(item => item.lineId === line.lineId)!.location,
         newOrders: line.productionCapacity - ordersClosed.length
       };
     }
@@ -131,6 +134,7 @@ export function getEmptyWhatShoudDoWithOffer(offer: fromModel.IOffer): IWhatShou
     departementId: '',
     localization: <any>undefined,
     offer: offer,
-    whatDo: EWhatShoudDoWithOffer.rejectOffer
+    whatDo: EWhatShoudDoWithOffer.rejectOffer,
+    continent: fromModel.EContinent.africa
   };
 }

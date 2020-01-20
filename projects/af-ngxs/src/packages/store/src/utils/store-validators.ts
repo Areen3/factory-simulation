@@ -7,10 +7,7 @@ import {
   getSelectorMetadata,
   SelectorMetaDataModel
 } from '../internal/internals';
-import {
-  CONFIG_MESSAGES as MESSAGES,
-  VALIDATION_CODE as CODE
-} from '../configs/messages.config';
+import { CONFIG_MESSAGES as MESSAGES, VALIDATION_CODE as CODE } from '../configs/messages.config';
 
 export abstract class StoreValidators {
   public static stateNameRegex: RegExp = new RegExp('^[a-zA-Z0-9_]+$');
@@ -29,10 +26,7 @@ export abstract class StoreValidators {
     }
   }
 
-  public static checkStateNameIsUnique(
-    state: StateClassInternal,
-    statesByName: StatesByName
-  ): string {
+  public static checkStateNameIsUnique(state: StateClassInternal, statesByName: StatesByName): string {
     const meta: MetaDataModel = this.getValidStateMeta(state);
     const stateName: string = meta!.name as string;
     const existingState = statesByName[stateName];
@@ -64,5 +58,10 @@ export abstract class StoreValidators {
     }
 
     return meta;
+  }
+  public static checkStateExists(state: any, path: string): void {
+    if (!state) {
+      throw new Error(MESSAGES[CODE.STATE_NOT_FOUND](path));
+    }
   }
 }

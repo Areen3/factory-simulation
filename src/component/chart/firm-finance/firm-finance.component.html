@@ -1,3 +1,15 @@
-<h3>company finances</h3>
-Sale: {{ (firmModel$ | async).actualSale }} Cost: {{ (firmModel$ | async).actualCosts }} Profits: {{ (firmModel$ | async).actualProfits }}
-{{ actualBudget$ | async }}
+<h3 class="reset state__header">Company finances <i class="pi pi-dollar"></i></h3>
+<p>Start budget: {{ actualBudget$ | async }}</p>
+<p>Sale: {{ (firmModel$ | async).actualSale }}</p>
+<p>Cost: {{ (firmModel$ | async).actualCosts }}</p>
+<p>Profits: {{ (firmModel$ | async).actualProfits }}</p>
+<p>
+  Actual condition:
+  <ng-container [ngSwitch]="getRange((firmModel$ | async).actualProfits)">
+    <ng-container *ngSwitchCase="-1">Bancrupt <i class="pi pi-ban" style="color: red;"></i></ng-container>
+    <ng-container *ngSwitchCase="0">Bad <i class="pi pi-thumbs-down" style="color: red;"></i></ng-container>
+    <ng-container *ngSwitchCase="1">Medium <i class="pi pi-align-justify" style="color: salmon;"></i></ng-container>
+    <ng-container *ngSwitchCase="2">Good <i class="pi pi-thumbs-up" style="color: green;"></i></ng-container>
+  </ng-container>
+</p>
+<p>Tick duration(ms): {{ duration$ | async }}</p>

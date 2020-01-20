@@ -4,6 +4,10 @@ body {
   margin: 0px;
 }
 
+body * {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 .max {
   width: 100%;
   display: block !important;
@@ -16,4 +20,127 @@ body {
 
 .wrap {
   background-color: #bae8e8;
+}
+
+.ui-slider {
+  margin-top: 5px !important;
+  margin-bottom: 5px !important;
+}
+
+.header__border {
+  border: 1px solid black;
+  padding: 6px;
+  color: white;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0px;
+  background-color: #272343;
+}
+
+.header__border .pi {
+  margin-left: 4px;
+}
+
+.ui-card-body {
+  padding: 0 0.6em !important;
+}
+
+span {
+  font-size: 0.9em;
+}
+
+.ui-g-12 {
+  padding: 4px !important;
+}
+
+.ui-radiobutton-label {
+  font-size: 0.8em;
+}
+
+.ui-card-content {
+  padding-bottom: 2px !important;
+}
+
+.reset {
+  padding: 0px !important;
+  margin: 0px !important;
+}
+
+.box__reset {
+  padding: 0px 2px !important;
+  margin: 0px !important;
+}
+
+.ui-g-12.reset {
+  padding: 0px !important;
+  margin: 0px !important;
+}
+
+.center.ui-card {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+}
+
+.ui-table-thead {
+  overflow-wrap: break-word;
+  font-size: 8.5px;
+}
+
+.ui-table-scrollable-header-box {
+  margin-right: 17px !important;
+}
+
+td {
+  font-size: 8px;
+}
+
+.ui-table-scrollable-body {
+  height: 140px !important;
+}
+
+.chartjs-render-monitor {
+  height: 180px !important;
+}
+
+.state__header {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+h3 {
+  font-size: 15px;
+}
+
+.ui-progressbar .ui-progressbar-value {
+  background: #ff8c69 !important;
+}
+
+.ui-progressbar {
+  background: white !important;
+}
+
+label {
+  font-size: 12px;
+}
+
+.style__span {
+  font-weight: bold;
+  font-size: 11px;
+}
+
+.style__p {
+  font-size: 11px;
+}
+
+.ui-button-secondary span.ui-button-text.ui-clickable {
+  padding: 0.429em 0 !important;
+}
+
+.center {
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }

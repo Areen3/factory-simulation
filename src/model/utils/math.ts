@@ -8,5 +8,9 @@ export function toRadians(angle: number): number {
   return angle * (Math.PI / 180);
 }
 export function getRandomRange(min: number, max: number): number {
-  return Math.floor(Math.random() * (max - min)) + min;
+  const random = Math.random();
+  return random * (max - min) + min;
+}
+export function getPerecent(value: number, max: number): number {
+  return Math.floor((value / max) * 100);
 }

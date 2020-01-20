@@ -1,19 +1,25 @@
-<h3>Offers state</h3>
-new: {{ (rates$ | async).new }} approved: {{ (rates$ | async).approved }} inProgress: {{ (rates$ | async).inProgress }} finished:
-{{ (rates$ | async).finished }} rejected:{{ (rates$ | async).rejected }}
-<p-table [columns]="cols" [value]="this.data | async" [scrollable]="true" scrollHeight="200px">
-  <ng-template pTemplate="header" let-columns>
-    <tr>
-      <th *ngFor="let col of columns">
-        {{ col.header }}
-      </th>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-rowData let-columns="columns">
-    <tr>
-      <td *ngFor="let col of columns">
-        {{ rowData[col.field] }}
-      </td>
-    </tr>
-  </ng-template>
-</p-table>
+<h3 class="reset state__header">Offers state <i class="pi pi-file-o"></i></h3>
+<span
+  >New: {{ (rates$ | async).new }} Approved: {{ (rates$ | async).approved }} In progress: {{ (rates$ | async).inProgress }} Finished:
+  {{ (rates$ | async).finished }} Rejected: {{ (rates$ | async).rejected }}</span
+>
+<div class="ui-g">
+  <div class="ui-g-12">
+    <p-table [columns]="cols" [value]="this.data | async" [scrollable]="true">
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns">
+            {{ col.header }}
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr>
+          <td *ngFor="let col of columns">
+            {{ rowData[col.field] }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

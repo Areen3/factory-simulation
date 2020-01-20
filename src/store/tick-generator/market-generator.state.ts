@@ -6,6 +6,7 @@ import * as fromModel from '../../model';
 import { BaseState, initialBaseStateDataModel } from '../base';
 import { ProductState } from '../product';
 import { TickGeneratorState } from './tick.state';
+import { tag } from 'rxjs-spy/operators';
 
 const initialMarketGeneratorDataModel: fromModel.IMarketGeneratorModel = {
   ...initialBaseStateDataModel,
@@ -36,19 +37,20 @@ export class MarketGeneratorState extends BaseState<fromModel.IMarketGeneratorMo
     const run$: Observable<boolean> = this.store.select(TickGeneratorState.run$);
     run$
       .pipe(
+        tag('gen_market'),
         filter(run => run),
         switchMap(() => this.store.select(ProductState.productsArray$)),
         tap(products => this.inicjalizeStateOnRun(ctx, products)),
         switchMap(() => this.actions$),
         ofActionSuccessful(fromModel.TickAction.Tick),
         map((tick: fromModel.TickAction.Tick) => tick.payload),
-        switchMap(tick => combineLatest(of(tick), this.store.select(ProductState.productsArray$))),
-        map(([tick, products]) => this.buildOfferArray(ctx, tick, products))
+        switchMap(tick => combineLatest([of(tick), this.store.select(ProductState.productsArray$)])),
+        map(([tick, products]) => this.buildOfferArray(ctx, tick, products)),
+        filter(offerArray => offerArray.offers.length > 0),
+        tap(offerArray => this.store.dispatch(new fromModel.SaleScheduleAction.NewOffer(offerArray)))
+        // take(100)
       )
-      .subscribe(offerArray => {
-        // console.log('generate market: ', offerArray);
-        this.sendOffers(offerArray);
-      });
+      .subscribe(() => {});
   }
   private buildOfferArray(
     ctx: StateContext<fromModel.IMarketGeneratorModel>,
@@ -58,16 +60,18 @@ export class MarketGeneratorState extends BaseState<fromModel.IMarketGeneratorMo
     const state = ctx.getState();
     const req: fromModel.IProductRequest[] = [];
     const result: fromModel.SaleScheduleAction.INewOfferOnMarket = products
+      .filter(item => item.active)
       .map(item => {
         const requestItem = state.productRequest.find(productItem => productItem.productId === item.productId);
+        const randomCount = Math.floor(item.maxMarketDemand * fromModel.getRandomRange(0.8, 1.2));
+        const sinCount = (Math.sin(fromModel.toRadians(requestItem!.sinusDegrees)) + 1) / 2;
+        const count = Math.floor(sinCount * randomCount);
+
         const productRequest: fromModel.IProductRequest = {
           ...requestItem!,
           tick,
           sinusDegrees: requestItem!.sinusDegrees + 1,
-          actualRequest: Math.floor(
-            ((Math.sin(fromModel.toRadians(requestItem!.sinusDegrees)) + 1) / 2) *
-              Math.floor(item.maxMarketDemand * fromModel.getRandomRange(0.8, 1.2))
-          )
+          actualRequest: count
         };
         const offer: fromModel.SaleScheduleAction.INewOfferOnMarket = {
           offers:
@@ -92,10 +96,6 @@ export class MarketGeneratorState extends BaseState<fromModel.IMarketGeneratorMo
       );
     ctx.patchState({ productRequest: [...req] });
     return result;
-  }
-
-  private sendOffers(offerArray: fromModel.SaleScheduleAction.INewOfferOnMarket): Observable<any> {
-    return this.store.dispatch(new fromModel.SaleScheduleAction.NewOffer(offerArray));
   }
 
   private inicjalizeStateOnRun(ctx: StateContext<fromModel.IMarketGeneratorModel>, products: fromModel.TProductArray): void {

@@ -4,6 +4,7 @@ import { IBaseState } from './base';
 export interface ITickGeneratorModel extends IBaseState {
   speed: number;
   lastTick: number;
+  duration: number;
   run: boolean;
 }
 

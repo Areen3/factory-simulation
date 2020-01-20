@@ -1,10 +1,10 @@
-import { Component, OnInit } from '@angular/core';
-import { Store, Select } from '@ngxs/store';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Select, Store } from '@ngxs/store';
+import { combineLatest, Observable } from 'rxjs';
+import { filter, map, scan, switchMap } from 'rxjs/operators';
+import { BaseComponent } from 'src/component/base/base.component';
 import * as fromModel from 'src/model';
 import { MarketGeneratorState, ProductState, TickGeneratorState } from 'src/store';
-import { Observable, combineLatest } from 'rxjs';
-import { filter, switchMap, map, bufferCount } from 'rxjs/operators';
-import { BaseComponent } from 'src/component/base/base.component';
 
 interface IProductAndRequests {
   request: Array<fromModel.IProductRequest>;
@@ -16,37 +16,45 @@ type TProductObject = fromModel.IIndexStringType<IProductAndRequests>;
   selector: 'app-market-demand',
   styleUrls: ['./market-demand.scss'],
   template: `
-    <p-chart type="line" [data]="data" [options]="options"></p-chart>
-  `
+    <h3 class="reset state__header">Market demand <i class="pi pi-chart-line"></i></h3>
+    <div class="ui-g">
+      <div class="ui-g-12" *ngIf="data$ | async as data">
+        <ng-container *ngIf="data.length !== 0">
+          <ngx-charts-line-chart
+            [view]="view"
+            [legend]="true"
+            [showXAxisLabel]="true"
+            [showYAxisLabel]="true"
+            [xAxis]="true"
+            [yAxis]="true"
+            [xAxisLabel]="'time'"
+            [yAxisLabel]="'count'"
+            [timeline]="true"
+            [results]="data"
+          >
+          </ngx-charts-line-chart>
+        </ng-container>
+      </div>
+    </div>
+  `,
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class MarketDemandComponent extends BaseComponent implements OnInit {
-  data: fromModel.ILineChartModel;
-  options: any;
+  data$: Observable<fromModel.TLineChartModel>;
+  view: any[] = [600, 300];
   constructor(public store: Store) {
     super();
-    this.options = {
-      title: { display: true, text: 'Market demand', fontSize: 16 },
-      legend: { position: fromModel.EChartLegendPosition.bottom },
-      animation: false
-    };
   }
   @Select(MarketGeneratorState.productRequest$) productRequest$: Observable<fromModel.TProductRequestArray>;
   @Select(ProductState.productsArray$) products$: Observable<fromModel.TProductArray>;
   @Select(TickGeneratorState.run$) run$: Observable<boolean>;
   ngOnInit(): void {
-    this.subscriptons.add(
-      this.run$
-        .pipe(
-          filter(run => run),
-          switchMap(() => combineLatest(this.productRequest$, this.products$)),
-          map(([request, product]) => this.mapToProductAndRequest(request, product)),
-          bufferCount(80, 1),
-          map(data => this.changeBufferedDataToObject(data)),
-          map(data => this.buildChartData(data))
-        )
-        .subscribe(dataChart => {
-          this.data = dataChart;
-        })
+    this.data$ = this.run$.pipe(
+      filter(run => run),
+      switchMap(() => combineLatest(this.productRequest$, this.products$)),
+      map(([request, product]): TProductObject => this.mapToProductAndRequest(request, product)),
+      scan((acc: TProductObject, curr: TProductObject): TProductObject => this.updateBuffer(acc, curr), {}),
+      map(data => this.buildChartData(data))
     );
   }
   private mapToProductAndRequest(request: fromModel.TProductRequestArray, product: fromModel.TProductArray): TProductObject {
@@ -57,35 +65,30 @@ export class MarketDemandComponent extends BaseComponent implements OnInit {
       }))
       .reduce((acc, curr) => ({ ...acc, [curr.product.name]: curr }), {});
   }
-  private changeBufferedDataToObject(data: Array<TProductObject>): TProductObject {
-    return data.reduce(
-      (accOut: TProductObject, currOut: TProductObject): TProductObject => ({
-        ...accOut,
-        ...Object.values(currOut).reduce<TProductObject>(
-          (acc: TProductObject, curr: IProductAndRequests): TProductObject => ({
-            ...acc,
-            ...(accOut[curr.product.name] === undefined
-              ? { [curr.product.name]: curr }
-              : { [curr.product.name]: { ...curr, request: [...accOut[curr.product.name].request, ...curr.request] } })
-          }),
-          {}
-        )
+  private updateBuffer(accOut: TProductObject, currIn: TProductObject): TProductObject {
+    return Object.values(currIn).reduce<TProductObject>(
+      (acc: TProductObject, curr: IProductAndRequests): TProductObject => ({
+        ...acc,
+        ...(accOut[curr.product.name] === undefined
+          ? { [curr.product.name]: curr }
+          : { [curr.product.name]: { ...curr, request: this.trimArray([...accOut[curr.product.name].request, ...curr.request]) } })
       }),
       {}
     );
   }
-  private buildChartData(chartData: TProductObject): fromModel.ILineChartModel {
-    return {
-      labels: Object.values(chartData)[0].request.map(item => item.tick.toString()),
-      datasets: Object.values(chartData).map(item => {
-        const x: fromModel.IChartDataSetItem<number> = {
-          borderColor: item.product.borderColor,
-          data: item.request.map(rq => rq.actualRequest),
-          fill: false,
-          label: item.product.name
-        };
-        return x;
+  private trimArray(data: Array<fromModel.IProductRequest>): Array<fromModel.IProductRequest> {
+    const size: number = 500;
+    return data.length <= size ? data : data.slice(data.length - size, size);
+  }
+  private buildChartData(chartData: TProductObject): fromModel.TLineChartModel {
+    return Object.values(chartData).map(
+      (data: IProductAndRequests): fromModel.ILineChartItem => ({
+        name: data.product.name,
+        series: this.rebuildSeries(data.request)
       })
-    };
+    );
+  }
+  private rebuildSeries(data: Array<fromModel.IProductRequest>): Array<fromModel.IChartDataSetItem<number>> {
+    return data.map((item): fromModel.IChartDataSetItem<number> => ({ name: item.tick.toString(), value: item.actualRequest }));
   }
 }

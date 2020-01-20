@@ -1,19 +1,27 @@
 <p-toast [style]="{ marginTop: '80px' }" position="top-center" key="tc"></p-toast>
-<div class="ui-g">
-  <div class="ui-g-12 header">
-    <h1 class="first">{{ title }}<i class="pi pi-spin pi-cog" style="margin-left: 5px;"></i></h1>
+<div class="ui-fluid">
+  <div class="ui-g">
+    <div class="ui-g-12 header">
+      <h3 class="reset">{{ title }}<i class="pi pi-spin pi-cog" style="margin-left: 5px;"></i></h3>
+    </div>
   </div>
-</div>
 
-<div class="ui-g control">
-  <div class="ui-g-4"><app-life-cycle></app-life-cycle></div>
-  <div class="ui-g-8"><app-product></app-product></div>
-</div>
+  <div class="ui-g control">
+    <div class="ui-g-3"><app-life-cycle></app-life-cycle></div>
+    <div class="ui-g-4"><app-product></app-product></div>
+    <div class="ui-g-5"><app-continent-change></app-continent-change></div>
+  </div>
 
-<app-world></app-world>
-<div class="ui-g chart">
-  <div class="ui-g-4 chart__box"><app-market-demand></app-market-demand></div>
-  <div class="ui-g-4 chart__box"><app-offer-history></app-offer-history></div>
-  <div class="ui-g-4 chart__box"><app-order-history></app-order-history></div>
-  <div class="ui-g-4 chart__box"><app-firm-finance></app-firm-finance></div>
+  <div class="ui-g chart">
+    <div class="ui-g-4 chart__box"><app-market-demand></app-market-demand></div>
+    <div class="ui-g-4 chart__box"><app-offer-history></app-offer-history></div>
+    <div class="ui-g-4 chart__box"><app-order-history></app-order-history></div>
+    <div class="ui-g-4 chart__box"><app-firm-finance></app-firm-finance></div>
+    <div class="ui-g-4 chart__box"><app-product-chart></app-product-chart></div>
+    <div class="ui-g-4 chart__box"><app-containent-chart></app-containent-chart></div>
+  </div>
+
+  <div class="ui-g panel">
+    <div class="ui-g-12"><app-world></app-world></div>
+  </div>
 </div>

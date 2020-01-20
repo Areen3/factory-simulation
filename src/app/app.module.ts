@@ -12,6 +12,12 @@ import { SliderModule } from 'primeng/slider';
 import { SpinnerModule } from 'primeng/spinner';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { RadioButtonModule } from 'primeng/radiobutton';
+import { CardModule } from 'primeng/card';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
+import { create } from 'rxjs-spy';
+
 import * as fromComp from 'src/component';
 import {
   FirmState,
@@ -22,10 +28,11 @@ import {
   ProductState,
   SaleSchedulerState,
   StaffState,
-  TickGeneratorState,
+  TickGeneratorState
 } from 'src/store';
 
 import { AppComponent } from './app.component';
+import { Spy } from 'rxjs-spy/spy-interface';
 
 @NgModule({
   declarations: [
@@ -38,7 +45,12 @@ import { AppComponent } from './app.component';
     fromComp.FirmFinanceComponent,
     fromComp.ContinentComponent,
     fromComp.WorldComponent,
-    fromComp.DepartamentComponent
+    fromComp.DepartamentComponent,
+    fromComp.LineComponent,
+    fromComp.InProgressComponent,
+    fromComp.ContinentChangeComponent,
+    fromComp.ProductChartComponent,
+    fromComp.ContainentChartComponent
   ],
   imports: [
     BrowserModule,
@@ -58,12 +70,16 @@ import { AppComponent } from './app.component';
     FormsModule,
     ButtonModule,
     SliderModule,
+    CardModule,
     SpinnerModule,
     DropdownModule,
     CheckboxModule,
     ChartModule,
     TableModule,
-    ToastModule
+    ToastModule,
+    ProgressBarModule,
+    RadioButtonModule,
+    NgxChartsModule
   ],
   exports: [
     AppComponent,
@@ -75,11 +91,17 @@ import { AppComponent } from './app.component';
     fromComp.FirmFinanceComponent,
     fromComp.ContinentComponent,
     fromComp.WorldComponent,
-    fromComp.DepartamentComponent
+    fromComp.DepartamentComponent,
+    fromComp.LineComponent,
+    fromComp.InProgressComponent,
+    fromComp.ContinentChangeComponent,
+    fromComp.ProductChartComponent,
+    fromComp.ContainentChartComponent
   ],
   providers: [],
   bootstrap: [AppComponent]
 })
 export class AppModule {
   public store: Store;
+  public spy: Spy = create();
 }

@@ -1,19 +1,22 @@
-<h3>Orders state</h3>
-new: {{ (rates$ | async).new }} inProgress: {{ (rates$ | async).inProgress }} finished:
-{{ (rates$ | async).finished }}
-<p-table [columns]="cols" [value]="this.data | async" [scrollable]="true" scrollHeight="200px">
-  <ng-template pTemplate="header" let-columns>
-    <tr>
-      <th *ngFor="let col of columns">
-        {{ col.header }}
-      </th>
-    </tr>
-  </ng-template>
-  <ng-template pTemplate="body" let-rowData let-columns="columns">
-    <tr>
-      <td *ngFor="let col of columns">
-        {{ rowData[col.field] }}
-      </td>
-    </tr>
-  </ng-template>
-</p-table>
+<h3 class="reset state__header">Orders state <i class="pi pi-shopping-cart"></i></h3>
+<span>New: {{ (rates$ | async).new }} In progress: {{ (rates$ | async).inProgress }} Finished: {{ (rates$ | async).finished }}</span>
+<div class="ui-g">
+  <div class="ui-g-12">
+    <p-table [columns]="cols" [value]="this.data | async" [scrollable]="true" scrollHeight="130px">
+      <ng-template pTemplate="header" let-columns>
+        <tr>
+          <th *ngFor="let col of columns">
+            {{ col.header }}
+          </th>
+        </tr>
+      </ng-template>
+      <ng-template pTemplate="body" let-rowData let-columns="columns">
+        <tr>
+          <td *ngFor="let col of columns">
+            {{ rowData[col.field] }}
+          </td>
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+</div>

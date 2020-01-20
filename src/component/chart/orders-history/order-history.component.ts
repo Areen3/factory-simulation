@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
 import { Store, Select } from '@ngxs/store';
 import { Observable } from 'rxjs';
 import * as fromModel from 'src/model';
@@ -8,7 +8,8 @@ import { filter, switchMap, tap, map } from 'rxjs/operators';
 @Component({
   selector: 'app-order-history',
   styleUrls: ['./order-history.scss'],
-  templateUrl: './order-history.component.html'
+  templateUrl: './order-history.component.html',
+  changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class OrdersHistoryComponent implements OnInit {
   data: Observable<fromModel.IOrder[]>;

@@ -7,9 +7,10 @@ import { StaffState } from './staff.state';
 const initialFirmDataModel: fromModel.IFirmModel = {
   ...initialBaseStateDataModel,
   actualCosts: 0,
-  actualProfits: 5000,
+  actualProfits: 10000,
   actualSale: 0,
-  budget: 5000,
+  budget: 10000,
+  expertMode: false,
   financeHistory: []
 };
 
@@ -34,6 +35,10 @@ export class FirmState extends BaseState<fromModel.IFirmModel> {
     return state.budget;
   }
   @Selector()
+  static ekspertMode$(state: fromModel.IFirmModel): boolean {
+    return state.expertMode;
+  }
+  @Selector()
   static state$<T>(state: T): T {
     return state;
   }
@@ -46,8 +51,20 @@ export class FirmState extends BaseState<fromModel.IFirmModel> {
       actualSale: state.actualSale + action.payload.actualSale
     });
   }
+  @Action(fromModel.CompanyMenagmentAction.ExpertModeChange)
+  expertModeChange(ctx: StateContext<fromModel.IFirmModel>, action: fromModel.CompanyMenagmentAction.ExpertModeChange): void {
+    ctx.patchState({ expertMode: action.payload });
+  }
+  @Action(fromModel.CompanyMenagmentAction.BudgetChange)
+  budgetChange(ctx: StateContext<fromModel.IFirmModel>, action: fromModel.CompanyMenagmentAction.BudgetChange): void {
+    const state = ctx.getState();
+    ctx.patchState({
+      budget: action.payload,
+      actualProfits: state.actualSale - state.actualCosts + action.payload
+    });
+  }
   @Action(fromModel.CompanyMenagmentAction.AddCostFromLine)
-  addCostFromLine(ctx: StateContext<fromModel.IFirmModel>, action: fromModel.CompanyMenagmentAction.AddCostFromLine): void {
+  addCostFromLine(ctx: StateContext<fromModel.IFirmModel>, action: fromModel.CompanyMenagmentAction.AddCostFromLine): any {
     const state = ctx.getState();
     const newFinance = action.payload.map((cost: fromModel.CompanyMenagmentAction.IAddCostFromLineData) => {
       const finHistory: fromModel.IFinanceHistory = {
@@ -61,12 +78,15 @@ export class FirmState extends BaseState<fromModel.IFirmModel> {
       };
       return finHistory;
     });
-    ctx.patchState({ financeHistory: [...state.financeHistory, ...newFinance] });
+    const sumFinance = state.financeHistory.concat(newFinance);
+    ctx.patchState({
+      financeHistory: sumFinance.length <= 100 ? sumFinance : sumFinance.slice(sumFinance.length - 100, 100)
+    });
     const actualCosts: number = newFinance.reduce((acc, curr) => acc + curr.costSummary, 0);
-    ctx.dispatch(new fromModel.CompanyMenagmentAction.UpdateFinance({ actualCosts, actualSale: 0 }));
+    return ctx.dispatch(new fromModel.CompanyMenagmentAction.UpdateFinance({ actualCosts, actualSale: 0 }));
   }
   @Action(fromModel.CompanyMenagmentAction.AddSaleFromLine)
-  addSaleFromLine(ctx: StateContext<fromModel.IFirmModel>, action: fromModel.CompanyMenagmentAction.AddSaleFromLine): void {
+  addSaleFromLine(ctx: StateContext<fromModel.IFirmModel>, action: fromModel.CompanyMenagmentAction.AddSaleFromLine): any {
     const state = ctx.getState();
     const newFinance = action.payload.map((cost: fromModel.CompanyMenagmentAction.IAddSaleFromLineData) => {
       const finHistory: fromModel.IFinanceHistory = {
@@ -82,6 +102,6 @@ export class FirmState extends BaseState<fromModel.IFirmModel> {
     });
     ctx.patchState({ financeHistory: [...state.financeHistory, ...newFinance] });
     const actualSale: number = newFinance.reduce((acc, curr) => acc + curr.sale, 0);
-    ctx.dispatch(new fromModel.CompanyMenagmentAction.UpdateFinance({ actualCosts: 0, actualSale }));
+    return ctx.dispatch(new fromModel.CompanyMenagmentAction.UpdateFinance({ actualCosts: 0, actualSale }));
   }
 }

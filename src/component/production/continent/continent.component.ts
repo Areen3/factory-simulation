@@ -1,17 +1,27 @@
 import { Component, Input, OnDestroy, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { combineLatest, Observable, of } from 'rxjs';
-import { distinctUntilChanged, map, switchMap } from 'rxjs/operators';
+import { distinctUntilChanged, filter, map, switchMap } from 'rxjs/operators';
 import * as fromModel from 'src/model';
-import { DepartamentState, FirmState, ProductionMenagmentState, TickGeneratorState } from 'src/store';
+import { DepartamentState, ProductionMenagmentState, TickGeneratorState } from 'src/store';
 
 @Component({
   selector: 'app-continent',
   styleUrls: ['./continent.scss'],
-  templateUrl: './continent.component.html'
+  template: `
+    <p class="reset" style="font-size: 12px;">
+      <span style="font-weight: bold; font-size: 13px;">{{ continent.localization }}:</span> Department: {{ continent.openDepartaments }}
+      <!--Salary modifier: {{ continent.salaryModifier }} -->
+      Lines: {{ linesCount$ | async }}
+    </p>
+    <ng-container *ngFor="let departament of departaments$ | async | keyvalue">
+      <div class="ui-g-12">
+        <app-departament [departamentId]="departament.value.departamentId"></app-departament>
+      </div>
+    </ng-container>
+  `
 })
 export class ContinentComponent implements OnInit, OnDestroy {
-  firmModel$: Observable<fromModel.IFirmModel>;
   @Input()
   continent: fromModel.IContainent;
   linesCount$: Observable<number>;
@@ -27,28 +37,26 @@ export class ContinentComponent implements OnInit, OnDestroy {
   ngOnInit(): void {
     // console.log('tworze on init');
     this.departaments$ = this.store.select(ProductionMenagmentState.departamentLocalizations$).pipe(
+      distinctUntilChanged((a, b) => {
+        return JSON.stringify(a) === JSON.stringify(b);
+      }),
       switchMap(departamentLocalizations => {
         const depObservable = departamentLocalizations.map(dep =>
           this.store.selectInContext(DepartamentState.dataToGui$, dep.localization)
         );
         return of(depObservable).pipe(
           switchMap(item => combineLatest(...item)),
-          // tap(deploc =>
-          //   console.log(`dep gui changed  222222: ${deploc.reduce((acc, curr: fromModel.IDepartamentGui) => acc + curr.departamentId, '')}`)
-          // ),
+          filter(() => this.continent !== undefined),
+          distinctUntilChanged((a, b) => {
+            return JSON.stringify(a) === JSON.stringify(b);
+          }),
           map((dep: Array<fromModel.IDepartamentGui>) => dep.filter(dep2 => dep2.continent === this.continent.localization))
         );
-      }),
-      distinctUntilChanged()
+      })
     );
     this.linesCount$ = this.departaments$.pipe(
       map(dep => dep.reduce((acc, curr) => acc + curr.openLines, 0)),
       distinctUntilChanged()
     );
-
-    const loc = this.store.getStateLocationByStateClass(FirmState);
-    this.firmModel$ = this.store.selectInContext(FirmState.state$, loc);
-    // const x = this.store.selectSnapshot(FirmState.state$);
-    // const y = this.store.selectSnapshotInContext(FirmState.state$, loc);
   }
 }

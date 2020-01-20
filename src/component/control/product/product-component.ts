@@ -1,8 +1,9 @@
-import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
-import { Store, Select } from '@ngxs/store';
-import { IProduct, ProductAction, TProductArray } from 'src/model';
-import { ProductState } from 'src/store';
+import { AfterViewInit, ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
+import { Select, Store } from '@ngxs/store';
 import { Observable } from 'rxjs';
+import { BaseComponent } from 'src/component/base/base.component';
+import { EProductKind, IProduct, ProductAction, TProductArray } from 'src/model';
+import { ProductState, FirmState } from 'src/store';
 
 @Component({
   selector: 'app-product',
@@ -10,12 +11,46 @@ import { Observable } from 'rxjs';
   templateUrl: `product-component.html`,
   changeDetection: ChangeDetectionStrategy.OnPush
 })
-export class ProductComponent implements OnInit {
+export class ProductComponent extends BaseComponent implements OnInit, AfterViewInit {
   selectedProduct: IProduct;
-  constructor(public store: Store) {}
+  productKind: typeof EProductKind = EProductKind;
+  numberOfParallelProduction: number = 10;
+  tickToProduceOneElement: number = 1;
+  maxMarketDemand: number = 100;
+  @Select(FirmState.ekspertMode$) ekspertMode$: Observable<boolean>;
+  constructor(public store: Store) {
+    super();
+  }
+
   @Select(ProductState.productsArray$) products$: Observable<TProductArray>;
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.onAllMarketDemand();
+    this.onAllTickProduce();
+    this.onAllParalel();
+  }
+  ngAfterViewInit(): void {}
   updateClick(): void {
     this.store.dispatch(new ProductAction.Update(this.selectedProduct));
+  }
+  onDropDownChange(e: any): void {
+    this.selectedProduct = { ...e.value };
+  }
+  onMaxMarketDemandChange(): void {
+    this.store.dispatch(new ProductAction.Update(this.selectedProduct));
+  }
+  onTickToProduceOneElementChange(): void {
+    this.store.dispatch(new ProductAction.Update(this.selectedProduct));
+  }
+  onNumberOfParallelProductionChange(): void {
+    this.store.dispatch(new ProductAction.Update(this.selectedProduct));
+  }
+  onAllMarketDemand(): void {
+    this.store.dispatch(new ProductAction.AllMarketDemand(this.maxMarketDemand));
+  }
+  onAllTickProduce(): void {
+    this.store.dispatch(new ProductAction.AllTickToProduce(this.tickToProduceOneElement));
+  }
+  onAllParalel(): void {
+    this.store.dispatch(new ProductAction.AllNumberOfParallel(this.numberOfParallelProduction));
   }
 }

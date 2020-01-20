@@ -1,5 +1,6 @@
 import { Injectable } from '@angular/core';
 import { Action, Selector, State, StateContext, Store } from '@ngxs/store';
+import { Observable } from 'rxjs';
 import * as fromModel from '../../model';
 import { BaseState, initialBaseStateDataModel } from '../base';
 
@@ -33,7 +34,7 @@ export class OfferState extends BaseState<fromModel.IOfferModel> {
     return Object.values(state.offers);
   }
   @Action(fromModel.SaleScheduleAction.NewOffer)
-  newOffer(ctx: StateContext<fromModel.IOfferModel>, action: fromModel.SaleScheduleAction.NewOffer): void {
+  newOffer(ctx: StateContext<fromModel.IOfferModel>, action: fromModel.SaleScheduleAction.NewOffer): Observable<any> {
     const state = ctx.getState();
     const newOffers: fromModel.TIndexOfferType = action.payload.offers
       .map(offer => {
@@ -52,10 +53,7 @@ export class OfferState extends BaseState<fromModel.IOfferModel> {
         ...Object.values(state.offers)
           .filter(
             item =>
-              ((item.status === fromModel.EOfferStatus.rejected ||
-                item.status === fromModel.EOfferStatus.finished ||
-                item.status === fromModel.EOfferStatus.new) &&
-                action.payload.tick <= item.tick + 100) ||
+              item.status === fromModel.EOfferStatus.new ||
               item.status === fromModel.EOfferStatus.approved ||
               item.status === fromModel.EOfferStatus.inProgress
           )
@@ -64,9 +62,9 @@ export class OfferState extends BaseState<fromModel.IOfferModel> {
           }, {}),
         ...newOffers
       },
-      rates: { ...state.rates, new: state.rates.new + 1 }
+      rates: { ...state.rates, new: state.rates.new + action.payload.offers.length }
     });
-    ctx.dispatch(new fromModel.SaleScheduleAction.NewOfferAdded(Object.values(newOffers)));
+    return ctx.dispatch(new fromModel.SaleScheduleAction.NewOfferAdded(Object.values(newOffers)));
   }
 
   @Action(fromModel.SaleScheduleAction.FinishOffer)
@@ -112,7 +110,7 @@ export class OfferState extends BaseState<fromModel.IOfferModel> {
       approved: state.rates.approved + statusCount[fromModel.EOfferStatus.approved]
     };
     if (status === fromModel.EOfferStatus.rejected) {
-      console.log('approved ', rates, offersUpdate);
+      // console.log('approved ', rates, offersUpdate);
     }
     if (rates.new < 0) {
       console.log('mniejsze new');

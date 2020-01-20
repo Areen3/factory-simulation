@@ -1,62 +1,123 @@
-<h3>Select product <i class="pi pi-check-square" style="vertical-align: middle;"></i></h3>
-<div class="ui-g">
-  <div class="ui-g-12">
-    <div class="ui-g-10">
-      <p-dropdown
-        [options]="products$ | async"
-        [(ngModel)]="selectedProduct"
-        placeholder="Select a product"
-        optionLabel="name"
-        [style]="{ width: '100%' }"
-      ></p-dropdown>
-    </div>
-    <div class="ui-g-1">
-      <p-button
-        label="Update"
-        icon="pi pi-spin pi-refresh"
-        iconPos="right"
-        class="max"
-        styleClass=".ui-button-warning max"
-        class="ui-button-info"
-        (click)="updateClick()"
-      ></p-button>
-    </div>
-    <div class="ui-g-1">
-      <p-checkbox name="active" label="Active" value="selectedProduct.active"></p-checkbox>
-    </div>
+<h3 class="header__border">Select product <i class="pi pi-check-square"></i></h3>
+<p-card>
+  <div class="ui-g center" *ngIf="!(ekspertMode$ | async)" style="height: 118px !important;">
     <div class="ui-g-12">
-      <div class="all" *ngIf="selectedProduct">
-        <table>
-          <tr>
-            <th>Name</th>
-            <th>Cost Price</th>
-            <th>Price</th>
-            <th>Start Up Cost</th>
-            <th>Max Production</th>
-            <th>Product one</th>
-            <th>Employment Volume</th>
-            <th>Product Id</th>
-          </tr>
-          <tr>
-            <td><input type="text" pInputText placeholder="name" [(ngModel)]="selectedProduct.name" /></td>
-            <td><input type="number" pInputText placeholder="costForOneTick" [(ngModel)]="selectedProduct.costForOneTick" /></td>
-            <td><input type="number" pInputText placeholder="price" [(ngModel)]="selectedProduct.price" /></td>
-            <td>
-              <input
-                type="number"
-                pInputText
-                placeholder="numberOfParallelProduction"
+      <span>Paraller production: {{numberOfParallelProduction}}</span>
+      <p-slider [(ngModel)]="numberOfParallelProduction" (onSlideEnd)="onAllParalel()" [min]="1" [max]="10" [step]="1"></p-slider>
+      <span>Tick to produce one element: {{tickToProduceOneElement}}</span>
+      <p-slider [(ngModel)]="tickToProduceOneElement" (onSlideEnd)="onAllTickProduce()" [min]="1" [max]="10" [step]="1"></p-slider>
+      <span>Market demand: {{maxMarketDemand}}</span>
+      <p-slider [(ngModel)]="maxMarketDemand" (onSlideEnd)="onAllMarketDemand()" [min]="1" [max]="100" [step]="1"></p-slider>
+    </div>
+  </div>
+  <div class="ui-g" *ngIf="ekspertMode$ | async" style="height: 246px !important;">
+    <div class="ui-g-12 reset">
+      <div class="ui-g-8">
+        <p-dropdown
+          [options]="products$ | async"
+          [ngModel]="selectedProduct"
+          placeholder="Select a product"
+          optionLabel="name"
+          [style]="{ width: '100%' }"
+          (onChange)="onDropDownChange($event)"
+        ></p-dropdown>
+      </div>
+      <div class="ui-g-2">
+        <p-button
+          label="Update"
+          icon="pi pi-spin pi-refresh"
+          iconPos="right"
+          class="max"
+          styleClass=".ui-button-warning max"
+          class="ui-button-info"
+          (click)="updateClick()"
+        ></p-button>
+      </div>
+      <div class="ui-g-2" *ngIf="selectedProduct">
+        <p-checkbox name="active" label="Active" [(ngModel)]="selectedProduct.active" binary="true"></p-checkbox>
+      </div>
+    </div>
+    <div class="ui-g">
+      <div class="ui-g-12 reset">
+        <div class="all" *ngIf="selectedProduct">
+          <div class="ui-g-12 ui-md-3">
+            <p-card styleClass="center" class="card__height" header="Basic information">
+              <div class="ui-inputgroup">
+                <span class="ui-inputgroup-addon">Name</span>
+                <input type="text" pInputText placeholder="name" [(ngModel)]="selectedProduct.name" />
+              </div>
+              <div class="ui-inputgroup">
+                <span class="ui-inputgroup-addon">Cost</span>
+                <input type="number" pInputText placeholder="costSummary" [(ngModel)]="selectedProduct.costSummary" />
+              </div>
+              <div class="ui-inputgroup">
+                <span class="ui-inputgroup-addon">Price</span>
+                <input type="number" pInputText placeholder="price" [(ngModel)]="selectedProduct.price" />
+              </div>
+            </p-card>
+          </div>
+          <div class="ui-g-12 ui-md-5">
+            <p-card styleClass="center" header="Departament information">
+              <span>Paraller production: {{selectedProduct.numberOfParallelProduction}}</span>
+              <p-slider
                 [(ngModel)]="selectedProduct.numberOfParallelProduction"
-              />
-            </td>
-            <td>
-              <input type="number" pInputText placeholder="tickToProduceOneElement" [(ngModel)]="selectedProduct.tickToProduceOneElement" />
-            </td>
-            <td><input type="number" pInputText placeholder="employmentVolume" [(ngModel)]="selectedProduct.employmentVolume" /></td>
-            <td><input type="number" pInputText placeholder="productId" [(ngModel)]="selectedProduct.productId" /></td>
-          </tr>
-        </table>
+                (onSlideEnd)="onNumberOfParallelProductionChange()"
+                [min]="1"
+                [max]="10"
+                [step]="1"
+              ></p-slider>
+              <span>Tick to produce one element: {{selectedProduct.tickToProduceOneElement}}</span>
+              <p-slider
+                [(ngModel)]="selectedProduct.tickToProduceOneElement"
+                (onSlideEnd)="onTickToProduceOneElementChange()"
+                [min]="1"
+                [max]="10"
+                [step]="1"
+              ></p-slider>
+            </p-card>
+          </div>
+          <div class="ui-g-12 ui-md-4">
+            <p-card styleClass="center" header="Product information">
+              <div class="ui-inputgroup" style="margin-bottom: 5px;">
+                <span class="ui-inputgroup-addon">Employment Volume</span>
+                <input type="number" pInputText placeholder="employmentVolume" [(ngModel)]="selectedProduct.employmentVolume" />
+              </div>
+              <span>Market demand: {{selectedProduct.maxMarketDemand}}</span>
+              <p-slider
+                [(ngModel)]="selectedProduct.maxMarketDemand"
+                (onSlideEnd)="onMaxMarketDemandChange()"
+                [min]="1"
+                [max]="100"
+                [step]="1"
+              ></p-slider>
+              <div class="ui-inputgroup" style="align-items: center">
+                <span class="ui-inputgroup-addon">Product kind</span>
+                <p-radioButton
+                  name="group1"
+                  value="{{productKind.motorcycle}}"
+                  label="Motocycle"
+                  [(ngModel)]="selectedProduct.productKind"
+                  inputId="opt1"
+                ></p-radioButton>
+                <p-radioButton
+                  name="group1"
+                  value="{{productKind.car}}"
+                  label="Car"
+                  [(ngModel)]="selectedProduct.productKind"
+                  inputId="opt2"
+                ></p-radioButton>
+                <p-radioButton
+                  name="group1"
+                  value="{{productKind.van}}"
+                  label="Van"
+                  [(ngModel)]="selectedProduct.productKind"
+                  inputId="opt3"
+                ></p-radioButton>
+              </div>
+            </p-card>
+          </div>
+        </div>
       </div>
     </div>
   </div>
-</div>
+</p-card>

@@ -1,4 +1,4 @@
-import { IIndexNumberType, TProductId } from '../type';
+import { IIndexNumberType, TProductId, IIndexStringType } from '../type';
 
 export enum EProductKind {
   motorcycle = 'motorcycle',
@@ -25,6 +25,8 @@ export interface IProduct {
 
 export type TProductArray = Array<IProduct>;
 export type TProductIndex = IIndexNumberType<IProduct>;
+export type TProductBufferIndex = IIndexStringType<number>;
 export interface IProductModel {
   products: TProductIndex;
+  buffers: TProductBufferIndex;
 }
