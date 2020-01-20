@@ -63,106 +63,110 @@ możesz znaleźć w kodzie wskazany element albo przez toolbar z lewej strony al
 w review zanajdziesz zarówno elementy proste jak i trudniejsze 
 
 ## javascript  
-// REVIEW js example generic interface without specific type
-// REVIEW js example type declaration
-// REVIEW js example nested interface declaration
-// REVIEW js example enum declaration
-// REVIEW js example index type declaration
-// REVIEW js example index type declaration in storyge
-// REVIEW js example index type declaration in default
-// REVIEW js example index type using
-// REVIEW js example of inicjalization index of string
-// REVIEW js example of changing index map to array
-// REVIEW js example of pick type using
-// REVIEW js example of joining tables
-// REVIEW js example of simple sum array
-// REVIEW js example of joining tables by spread
-// REVIEW js example of declare array with inicjalization and process by map
-// REVIEW js example of reduce array to map
-// REVIEW js example of recude with type params declaration
-// REVIEW js example of change array of ordres to index with mapping strucutre
-// REVIEW js example of count properise in object
-// REVIEW js example of shallow copy of object
-// REVIEW js example of delete property from object
-// REVIEW js example of chaing array processing
-// REVIEW js example of sort array
-// REVIEW js example of joining object
-// REVIEW js example of declare return type from array function
-// REVIEW js example of few arrat chains
-// REVIEW js example of math function to make random, sinus, range ...
+* // REVIEW js example generic interface without specific type
+* // REVIEW js example type declaration
+* // REVIEW js example nested interface declaration
+* // REVIEW js example enum declaration
+* // REVIEW js example index type declaration
+* // REVIEW js example index type declaration in storyge
+* // REVIEW js example index type declaration in default
+* // REVIEW js example index type using
+* // REVIEW js example of inicjalization index of string
+* // REVIEW js example of changing index map to array
+* // REVIEW js example of pick type using
+* // REVIEW js example of joining tables
+* // REVIEW js example of simple sum array
+* // REVIEW js example of joining tables by spread
+* // REVIEW js example of declare array with inicjalization and process by map
+* // REVIEW js example of reduce array to map
+* // REVIEW js example of recude with type params declaration
+* // REVIEW js example of change array of ordres to index with mapping strucutre
+* // REVIEW js example of count properise in object
+* // REVIEW js example of shallow copy of object
+* // REVIEW js example of delete property from object
+* // REVIEW js example of chaing array processing
+* // REVIEW js example of sort array
+* // REVIEW js example of joining object
+* // REVIEW js example of declare return type from array function
+* // REVIEW js example of few arrat chains
+* // REVIEW js example of math function to make random, sinus, range ...
+
 
 ## angular
-// REVIEW angular example of decorator
-// REVIEW angular example of using decorator
-// REVIEW angular example of one binding to observale in template *ngIf="data$ | async as data">
-// REVIEW angular example how to get data from observable without subscribing
-// REVIEW angular example of tree child component strucuture word/conatinet/departament/line/progress
+* // REVIEW angular example of decorator
+* // REVIEW angular example of using decorator
+* // REVIEW angular example of one binding to observale in template *ngIf="data$ | async as data">
+* // REVIEW angular example how to get data from observable without subscribing
+* // REVIEW angular example of tree child component strucuture word/conatinet/departament/line/progress
+
 
 ## rjxj
-// REVIEW rxjs example of stop stream 
-// REVIEW rxjs example of changing array to object
-// REVIEW rxjs example of chain that procude element in factory
-// REVIEW rxjs example of removing part of store
-// REVIEW rxjs example of get data from combineLatest
-// REVIEW rxjs example of join another setream to main stream and example of semafor
-// REVIEW rxjs example of use join stream
-// REVIEW rxjs example of divde steram
-// REVIEW rxjs example of sending value to semafor
-// REVIEW rxjs example of processing array of stream orders
-// REVIEW rxjs example of nesting stream
-// REVIEW rxjs example of making swich in steams
-// REVIEW rxjs example of making swich in steream - only one of merga can be successed
-// REVIEW rxjs example of making case in switch in stream -simple filter
-// REVIEW rxjs example of finish stream
-// REVIEW rxjs example of starting new stream
-// REVIEW rxjs example of logging in rxjs
-// REVIEW rxjs example of logging in rxjs
-// REVIEW rxjs example of scan range of data in stream to make averrage value from it
-// REVIEW rxjs example tag stream to rxjs_spy
-// REVIEW rxjs example how to store data in stream that show in chart
-// REVIEW rxjs example how check if simulation runs and take disable components
+* // REVIEW rxjs example of stop stream 
+* // REVIEW rxjs example of changing array to object
+* // REVIEW rxjs example of chain that procude element in factory
+* // REVIEW rxjs example of removing part of store
+* // REVIEW rxjs example of get data from combineLatest
+* // REVIEW rxjs example of join another setream to main stream and example of semafor
+* // REVIEW rxjs example of use join stream
+* // REVIEW rxjs example of divde steram
+* // REVIEW rxjs example of sending value to semafor
+* // REVIEW rxjs example of processing array of stream orders
+* // REVIEW rxjs example of nesting stream
+* // REVIEW rxjs example of making swich in steams
+* // REVIEW rxjs example of making swich in steream - only one of merga can be successed
+* // REVIEW rxjs example of making case in switch in stream -simple filter
+* // REVIEW rxjs example of finish stream
+* // REVIEW rxjs example of starting new stream
+* // REVIEW rxjs example of logging in rxjs
+* // REVIEW rxjs example of logging in rxjs
+* // REVIEW rxjs example of scan range of data in stream to make averrage value from it
+* // REVIEW rxjs example tag stream to rxjs_spy
+* // REVIEW rxjs example how to store data in stream that show in chart
+* // REVIEW rxjs example how check if simulation runs and take disable components
+
 
 ## ngxs
-// REVIEW ngxs example base action without parameters
-// REVIEW ngxs example base action with parameters
-// REVIEW ngxs example how to ogranise actions
-// REVIEW ngxs action with object parameters
-// REVIEW ngxs example action command name convention 
-// REVIEW ngxs example action event name convention
-// REVIEW ngxs example action event type
-// REVIEW ngxs example model declaration
-// REVIEW ngxs example using model declaration part 1
-// REVIEW ngxs example using model declaration part 2
-// REVIEW ngxs example using model declaration part 3
-// REVIEW ngxs example base state that You can inherited
-// REVIEW ngxs example state that inherited from base
-// REVIEW ngxs example injection of state, useful for dynamic create without write it in forRoot
-// REVIEW ngxs example static child state
-// REVIEW ngxs example simple decorator @selector
-// REVIEW ngxs example decorator @state
-// REVIEW ngxs example decorator @action
-// REVIEW ngxs example decorator @state, useful for return all state but dengerous beacuse it monitoring all changes in children
-// REVIEW ngxs example for changing state
-// REVIEW ngxs example of return observable action, system wil wait for execute these action
-// REVIEW ngxs example of parameterized  selector
-// REVIEW ngxs example of using parameterized  selector
-// REVIEW ngxs example of update one element in index structure
-// REVIEW ngxs example of base state class for inheritance in feature
-// REVIEW ngxs example of using onDestroy part 1
-// REVIEW ngxs example of using onDestroy part 2
-// REVIEW ngxs example of selector that return object, little dengerous becasue for any changes in storyge it return different value
-// REVIEW ngxs example of building array of action that will be send
-// REVIEW ngxs example sending array of actions
-// REVIEW ngxs example of observable ngxs action
-// REVIEW ngxs example of getting data form observable action
-// REVIEW ngxs example of take snapshot from specific location
-// REVIEW ngxs example of dispatching action to specific location
-// REVIEW ngxs example of using ngxsOnInit
-// REVIEW ngxs example of process action in inherited states (car, motocycle, ...)
-// REVIEW ngxs example of removing part of store
-// REVIEW ngxs example of get part of state from location
-// REVIEW ngxs example how to add new state in localization
-// REVIEW ngxs example how to append element to array using operators
-// REVIEW ngxs example how to joins index of offer with array of offer, chang it to index and patch to state
-// REVIEW ngxs example how to dispatch action from component
-// REVIEW ngxs example how to subscribe dynamicliy on created new element of store
+* // REVIEW ngxs example base action without parameters
+* // REVIEW ngxs example base action with parameters
+* // REVIEW ngxs example how to ogranise actions
+* // REVIEW ngxs action with object parameters
+* // REVIEW ngxs example action command name convention 
+* // REVIEW ngxs example action event name convention
+* // REVIEW ngxs example action event type
+* // REVIEW ngxs example model declaration
+* // REVIEW ngxs example using model declaration part 1
+* // REVIEW ngxs example using model declaration part 2
+* // REVIEW ngxs example using model declaration part 3
+* // REVIEW ngxs example base state that You can inherited
+* // REVIEW ngxs example state that inherited from base
+* // REVIEW ngxs example injection of state, useful for dynamic create without write it in forRoot
+* // REVIEW ngxs example static child state
+* // REVIEW ngxs example simple decorator @selector
+* // REVIEW ngxs example decorator @state
+* // REVIEW ngxs example decorator @action
+* // REVIEW ngxs example decorator @state, useful for return all state but dengerous beacuse it monitoring all changes in children
+* // REVIEW ngxs example for changing state
+* // REVIEW ngxs example of return observable action, system wil wait for execute these action
+* // REVIEW ngxs example of parameterized  selector
+* // REVIEW ngxs example of using parameterized  selector
+* // REVIEW ngxs example of update one element in index structure
+* // REVIEW ngxs example of base state class for inheritance in feature
+* // REVIEW ngxs example of using onDestroy part 1
+* // REVIEW ngxs example of using onDestroy part 2
+* // REVIEW ngxs example of selector that return object, little dengerous becasue for any changes in storyge it return different value
+* // REVIEW ngxs example of building array of action that will be send
+* // REVIEW ngxs example sending array of actions
+* // REVIEW ngxs example of observable ngxs action
+* // REVIEW ngxs example of getting data form observable action
+* // REVIEW ngxs example of take snapshot from specific location
+* // REVIEW ngxs example of dispatching action to specific location
+* // REVIEW ngxs example of using ngxsOnInit
+* // REVIEW ngxs example of process action in inherited states (car, motocycle, ...)
+* // REVIEW ngxs example of removing part of store
+* // REVIEW ngxs example of get part of state from location
+* // REVIEW ngxs example how to add new state in localization
+* // REVIEW ngxs example how to append element to array using operators
+* // REVIEW ngxs example how to joins index of offer with array of offer, chang it to index and patch to state
+* // REVIEW ngxs example how to dispatch action from component
+* // REVIEW ngxs example how to subscribe dynamicliy on created new element of store
+
