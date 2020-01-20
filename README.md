@@ -100,7 +100,7 @@ w review zanajdziesz zarówno elementy proste jak i trudniejsze
 * // REVIEW angular example of tree child component strucuture word/conatinet/departament/line/progress
 
 
-## rjxj
+## rxjs
 * // REVIEW rxjs example of stop stream 
 * // REVIEW rxjs example of changing array to object
 * // REVIEW rxjs example of chain that procude element in factory
