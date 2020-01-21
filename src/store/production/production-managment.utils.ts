@@ -10,7 +10,6 @@ import { IDataConfiguration, IDoWithLine, IDoWithNewDepartament, IDoWithNewLine 
 import { findChipestDepartament, findLinesWithChipestOrder } from './production.utils';
 
 export function haveMoneyToStrtLineAndDepartament(store: Store, offer: fromModel.IOffer, data: IDataConfiguration): Observable<boolean> {
-  // return of(true);
   return haveMoneyToStart(store, offer, data, true).pipe(filter(havMoney => havMoney));
 }
 export function haveMoneyToStrtLine(store: Store, offer: fromModel.IOffer, data: IDataConfiguration): Observable<boolean> {
@@ -30,7 +29,6 @@ export function haveEnoughCapacityInAnyLine(store: Store, offer: fromModel.IOffe
     map((item): boolean => {
       const lines: Array<fromModel.IBaseProductionLineModel> = item.lines
         .map((line): fromModel.IBaseProductionLineModel => store.selectSnapshotInContext(BaseLineProductionState.state$, line.location))
-        // todo poprawić aby brac pod uwagę ilość produkcji wynikającą z produkutu
         .filter(line => line.productionCapacity - Object.keys(line.production).length > 0);
       return lines.length > 0;
     })
@@ -45,6 +43,7 @@ export function havePosibilityToRunNewDepartament(
 ): Observable<IDoWithNewDepartament> {
   const choisenContitnent = of(data).pipe(
     switchMap(() => {
+      // REVIEW rxjs example how to pass condition to the end of stream
       return combineLatest([of(data), haveMoneyToStart(store, offer, data, true)]);
     }),
     map(([item, money]) => ({ item, money })),
@@ -60,7 +59,6 @@ export function havePosibilityToRunNewDepartament(
       }
     ),
     map(item => ({ isPosibility: item.length > 0, continent: item.length > 0 ? item[0] : <any>undefined }))
-    // tap(item => console.log('is posibiity', item))
   );
   return choisenContitnent;
 }

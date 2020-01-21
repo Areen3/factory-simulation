@@ -2,7 +2,7 @@ import { SingleLocation } from '@ngxs/store';
 
 import * as fromModel from '../../model';
 import { EWhatShoudDoWithOffer, IDataConfiguration, IWhatShoudDoWithOffer } from './production-managment.model';
-
+// REVIEW js example of few arrat chains
 export function findChipestDepartament(locationConditions: fromModel.IIndexStringType<fromModel.IContainent>): fromModel.IContainent {
   const depCondition = Object.values(locationConditions)
     .sort((a, b) => a.salaryModifier - b.salaryModifier)

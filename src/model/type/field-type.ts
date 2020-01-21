@@ -5,6 +5,7 @@ export type TDepartamentId = string;
 export type TLineProductionId = string;
 export type TTick = number;
 
+// REVIEW js example index type declaration
 export interface IIndexStringType<TD> {
   [index: string]: TD;
 }

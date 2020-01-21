@@ -1,10 +1,10 @@
 import { NgxsAction } from '@ngxs/store';
 
-// bazowa akcja dla wszystkich akcji typu NGXS
+// REVIEW ngxs example base action without parameters
 export abstract class BaseAction extends NgxsAction {}
 
-// bazowa akcja z parametrami
-export abstract class BaseActionWithPayload<T> extends BaseAction {
+// REVIEW ngxs example base action with parameters
+export abstract class BaseActionWithPayload<T> extends NgxsAction {
   payload: T;
   protected constructor(data: T) {
     super();

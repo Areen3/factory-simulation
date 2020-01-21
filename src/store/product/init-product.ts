@@ -1,5 +1,5 @@
 import * as fromModel from '../../model';
-
+// REVIEW js example of declare array with inicjalization and process by map
 const product: fromModel.TProductArray = [
   {
     productId: 1,
@@ -20,7 +20,7 @@ const product: fromModel.TProductArray = [
   {
     productId: 2,
     name: 'BMW 2',
-    active: false,
+    active: true,
     departamentStartUpCost: 1000,
     lineStartUpCost: 500,
     employmentVolume: 10,
@@ -37,7 +37,7 @@ const product: fromModel.TProductArray = [
   {
     productId: 3,
     name: 'BMW 3',
-    active: false,
+    active: true,
     departamentStartUpCost: 1000,
     lineStartUpCost: 500,
     employmentVolume: 10,
@@ -54,7 +54,7 @@ const product: fromModel.TProductArray = [
   {
     productId: 4,
     name: 'Audi 100',
-    active: false,
+    active: true,
     departamentStartUpCost: 1000,
     lineStartUpCost: 500,
     employmentVolume: 10,
@@ -71,7 +71,7 @@ const product: fromModel.TProductArray = [
   {
     productId: 5,
     name: 'Audi 200',
-    active: false,
+    active: true,
     departamentStartUpCost: 1000,
     lineStartUpCost: 500,
     employmentVolume: 10,
@@ -86,6 +86,7 @@ const product: fromModel.TProductArray = [
     productKind: fromModel.EProductKind.van
   }
 ].map(updateProductItem);
+// REVIEW js example of reduce array to map
 export const productIndex: fromModel.TProductIndex = product.reduce((acc, curr) => ({ ...acc, [curr.productId]: curr }), {});
 export function updateProductItem(prod: fromModel.IProduct): fromModel.IProduct {
   const result: fromModel.IProduct = { ...prod };

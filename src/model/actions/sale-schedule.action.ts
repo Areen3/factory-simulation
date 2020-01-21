@@ -15,6 +15,7 @@ export namespace SaleScheduleAction {
     newOrder = 'cmd [SaleSchedule] new order',
     finishOrder = 'cmd [SaleSchedule] finish order',
     inProgressOrder = 'cmd [SaleSchedule] inProgress order',
+    // REVIEW ngxs example action event name convention
     newOrderAdded = 'event [SaleSchedule] new order added',
     newElementFinish = 'cmd [SaleSchedule] new elment fnish'
   }
@@ -93,6 +94,7 @@ export namespace SaleScheduleAction {
     static type: Types = Types.newOrderAdded;
     public constructor(data: T) {
       super(data);
+      // REVIEW ngxs example action event type
       this.kind = ActionKind.akEvent;
     }
   }

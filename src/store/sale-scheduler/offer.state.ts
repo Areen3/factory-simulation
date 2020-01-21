@@ -95,6 +95,7 @@ export class OfferState extends BaseState<fromModel.IOfferModel> {
     if (fromModel.EOfferStatus.inProgress === status) statusCount[fromModel.EOfferStatus.approved] = ids.length * -1;
     if (fromModel.EOfferStatus.rejected === status) statusCount[fromModel.EOfferStatus.new] = ids.length * -1;
 
+    // REVIEW ngxs example how to joins index of offer with array of offer, chang it to index and patch to state
     const offersUpdate: fromModel.TIndexOfferType = {
       ...state.offers,
       ...ids.reduce(
@@ -109,14 +110,14 @@ export class OfferState extends BaseState<fromModel.IOfferModel> {
       inProgress: state.rates.inProgress + statusCount[fromModel.EOfferStatus.inProgress],
       approved: state.rates.approved + statusCount[fromModel.EOfferStatus.approved]
     };
-    if (status === fromModel.EOfferStatus.rejected) {
-      // console.log('approved ', rates, offersUpdate);
-    }
+    // if (status === fromModel.EOfferStatus.rejected) {
+    //   console.log('approved ', rates, offersUpdate);
+    // }
     if (rates.new < 0) {
-      console.log('mniejsze new');
+      console.log('error less new');
     }
     if (rates.inProgress < 0) {
-      console.log('mniejsze inprogress');
+      console.log('error less inprogress');
     }
     ctx.patchState({ rates: rates, offers: offersUpdate });
   }

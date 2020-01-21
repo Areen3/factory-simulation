@@ -1,7 +1,7 @@
 import { Injectable } from '@angular/core';
 import { Action, Actions, NgxsOnDestroy, ofActionSuccessful, Selector, SingleLocation, State, StateContext, Store } from '@ngxs/store';
 import { combineLatest, Observable, of, Subject } from 'rxjs';
-import { filter, map, switchMap } from 'rxjs/operators';
+import { filter, map, switchMap, takeUntil } from 'rxjs/operators';
 import * as fromModel from '../../model';
 import { BaseState, initialBaseStateDataModel } from '../base';
 import { StaffState } from '../company-menagment';
@@ -30,6 +30,8 @@ export const initialBaseLineDataModel: fromModel.IBaseProductionLineModel = {
 @Injectable({
   providedIn: 'root'
 })
+// REVIEW ngxs example of base state class for inheritance in feature
+// REVIEW ngxs example of using onDestroy part 1
 export class BaseLineProductionState<T extends fromModel.IBaseProductionLineModel = fromModel.IBaseProductionLineModel> extends BaseState<T>
   implements NgxsOnDestroy {
   private destroy$: Subject<void> = new Subject<void>();
@@ -39,6 +41,7 @@ export class BaseLineProductionState<T extends fromModel.IBaseProductionLineMode
   }
   @Selector()
   static dataToGui$(state: fromModel.IBaseProductionLineModel): fromModel.ILineGui {
+    // REVIEW ngxs example of selector that return object, little dengerous becasue for any changes in storyge it return different value
     return {
       freeCapacity: state.freeCapacity,
       productionCapacity: state.productionCapacity,
@@ -80,7 +83,8 @@ export class BaseLineProductionState<T extends fromModel.IBaseProductionLineMode
     }
   }
   @Action(fromModel.ProductAction.BufferChange)
-  bufferChange(ctx: StateContext<fromModel.IBaseProductionLineModel>, action: fromModel.ProductAction.BufferChange): any {
+  // REVIEW ngxs example of process action in inherited states (car, motocycle, ...)
+  bufferChange(ctx: StateContext<fromModel.IBaseProductionLineModel>, action: fromModel.ProductAction.BufferChange): void {
     this.innerBufferChange(ctx, action.payload);
   }
   @Action(fromModel.ProductionAction.AddOrderToQueueProduction)
@@ -89,6 +93,7 @@ export class BaseLineProductionState<T extends fromModel.IBaseProductionLineMode
     action: fromModel.ProductionAction.AddOrderToQueueProduction
   ): void {
     const state = ctx.getState();
+    // REVIEW js example of change array of ordres to index with mapping strucutre
     const newElementToProduce: fromModel.TInProduceOnTheLineIndex = action.payload.orders
       .map(item => {
         // const randomCases = fromModel.getRandomRange(0, 2);
@@ -108,6 +113,7 @@ export class BaseLineProductionState<T extends fromModel.IBaseProductionLineMode
     const newStateProduce = { ...state.production, ...newElementToProduce };
     ctx.patchState({
       production: newStateProduce,
+      // REVIEW js example of count properise in object
       freeCapacity: state.productionCapacity - Object.keys(newStateProduce).length
     });
   }
@@ -117,8 +123,10 @@ export class BaseLineProductionState<T extends fromModel.IBaseProductionLineMode
     action: fromModel.ProductionAction.RemoveOrderFromQueue
   ): void {
     const state = ctx.getState();
+    // REVIEW js example of shallow copy of object
     const itemLeaved = { ...state.production };
     action.payload.forEach(item => {
+      // REVIEW js example of delete property from object
       delete itemLeaved[item];
     });
     ctx.patchState({
@@ -129,6 +137,7 @@ export class BaseLineProductionState<T extends fromModel.IBaseProductionLineMode
   @Action(fromModel.ProductionAction.ClearOrderInProduce)
   clearOrderInProduce(ctx: StateContext<fromModel.IBaseProductionLineModel>, action: fromModel.ProductionAction.ClearOrderInProduce): void {
     const state = ctx.getState();
+    // REVIEW js example of chaing array processing
     const productionWithClose = Object.values(state.production)
       .filter(item => action.payload.find(elem => elem === item.orderId))
       .map((item): fromModel.IInProduceOnTheLine => ({ ...item, orderCleared: true }))
@@ -142,6 +151,7 @@ export class BaseLineProductionState<T extends fromModel.IBaseProductionLineMode
     const tickWithoutOrders = prductArray.length > 0 ? 0 : state.ticksWithoutOrders + 1;
 
     const processedItems: fromModel.TInProduceOnTheLineIndex = prductArray
+      // REVIEW js example of sort array
       .sort((a, b) => b.tickTaken - a.tickTaken)
       .slice(0, state.numberOfParallelProduction)
       .map(item => {
@@ -159,38 +169,46 @@ export class BaseLineProductionState<T extends fromModel.IBaseProductionLineMode
           return { made: count, orderId: item.orderId };
         }
       );
-
+    // REVIEW js example of joining object
     const newStateProduce = { ...state.production, ...processedItems };
     ctx.patchState({
       production: newStateProduce,
       ticksWithoutOrders: tickWithoutOrders,
       freeCapacity: state.productionCapacity - Object.keys(newStateProduce).length
     });
+    // REVIEW ngxs example of building array of action that will be send
     const actionToSent = [];
     if (partialMade.length > 0) actionToSent.push(ctx.dispatch(new fromModel.SaleScheduleAction.NewElementInOrderFinish(partialMade)));
     if (tickWithoutOrders > 10) {
       actionToSent.push(this.store.dispatch(new fromModel.ProductionAction.RemoveLineFromProduction(state.lineId)));
     }
+    // REVIEW ngxs example sending array of actions
     if (actionToSent.length !== 0) return this.store.dispatch(actionToSent);
   }
-
+  // REVIEW ngxs example of using onDestroy part 2
   ngxsOnDestory(): void {
     this.destroy$.next();
     this.destroy$.complete();
   }
   protected processOrders(kind: fromModel.EProductKind): void {
-    // return;
+    // REVIEW ngxs example of using onDestroy part 2
     if (this.processOrdersRun) return;
     console.log('line run ' + kind);
     this.processOrdersRun = true;
     const run$: Observable<boolean> = this.store.select(TickGeneratorState.run$);
+    // REVIEW rxjs example of chain that procude element in factory
     run$
       .pipe(
+        // REVIEW rxjs example of stop stream
+        takeUntil(this.destroy$),
         filter(run => run),
+        // REVIEW ngxs example of observable ngxs action
         switchMap(() => this.actions$),
         ofActionSuccessful(fromModel.TickAction.Tick),
+        // REVIEW ngxs example of getting data form observable action
         map((tick: fromModel.TickAction.Tick) => tick.payload),
         switchMap(tick => this.processOneTickOnLines(tick, kind)),
+        // REVIEW rxjs example of changing array to object
         map(([tick, products]): {
           tick: number;
           products: fromModel.TProductIndex;
@@ -228,12 +246,13 @@ export class BaseLineProductionState<T extends fromModel.IBaseProductionLineMode
   }
   private processOneTickOnLines(tick: number, kind: fromModel.EProductKind): Observable<any> {
     const products = this.store.selectSnapshot(ProductState.productsIndex$);
-    const prodMenagmentState = <fromModel.IProductionManagmentModel>(
-      this.store.selectSnapshotInContext(BaseState.state$, SingleLocation.getLocation(fromModel.EStateName.productionManagmentState))
-    );
+    const prodMenagmentState = <
+      fromModel.IProductionManagmentModel // REVIEW ngxs example of take snapshot from specific location
+    >this.store.selectSnapshotInContext(BaseState.state$, SingleLocation.getLocation(fromModel.EStateName.productionManagmentState));
     const actionToSend = prodMenagmentState.productionLineLocalizations
       .filter(line => products[line.productId].productKind === kind)
       .map(line => {
+        // REVIEW ngxs example of dispatching action to specific location
         return this.store.dispatchInLocation(new fromModel.ProductionAction.ProcessOneTick({ tick }), line.location);
       });
     return combineLatest([of(tick), of(products), ...actionToSend]);

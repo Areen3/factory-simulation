@@ -4,6 +4,7 @@ import * as fromModel from '../../model';
 
 export const initialBaseStateDataModel: fromModel.IBaseState = {};
 
+// REVIEW ngxs example base state that You can inherited
 @State<fromModel.IBaseState>({
   name: 'BaseState',
   defaults: initialBaseStateDataModel
@@ -15,6 +16,6 @@ export class BaseState<T extends fromModel.IBaseState = fromModel.IBaseState> {
     return state;
   }
   emptyFunction(data: T): void {
-    data === data;
+    console.log(data);
   }
 }

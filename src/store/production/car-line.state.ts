@@ -18,8 +18,10 @@ const initialCarLineDataModel: fromModel.ICarProductionLineModel = {
 @Injectable({
   providedIn: 'root'
 })
+// REVIEW angular example of using decorator
 @registerLineProduction(fromModel.EProductKind.car)
 export class CarLineProductionState extends BaseLineProductionState<fromModel.ICarProductionLineModel> implements NgxsOnInit {
+  // REVIEW ngxs example of using ngxsOnInit
   ngxsOnInit(ctx: StateContext<fromModel.IBaseProductionLineModel>): void {
     this.processOrders(fromModel.EProductKind.car);
     const buffer = this.store.selectSnapshot(ProductState.buffers$);

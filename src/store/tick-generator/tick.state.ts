@@ -80,15 +80,14 @@ export class TickGeneratorState extends BaseState<fromModel.ITickGeneratorModel>
         map(tick => ({ tick, start: performance.now() })),
         switchMap(tick => combineLatest([of(tick.start), this.store.dispatch(new fromModel.TickAction.Tick(tick.tick))])),
         map(([start]) => start),
+        // REVIEW rxjs example of scan range of data in stream to make averrage value from it
         scan((acc: { averragePerformance: number; buffer: Array<number> }, curr) => this.prepareBuffer(curr, acc), {
           averragePerformance: 0,
           buffer: []
         }),
         tap(perform => ctx.patchState({ duration: perform.averragePerformance }))
       )
-      .subscribe(() => {
-        // console.log('generate tick', tick);
-      });
+      .subscribe(() => {});
   }
   ngxsOnDestory(): void {}
   ngxsOnInit(ctx: StateContext<fromModel.ITickGeneratorModel>): void {

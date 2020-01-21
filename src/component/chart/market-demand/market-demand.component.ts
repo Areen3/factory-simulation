@@ -18,7 +18,7 @@ type TProductObject = fromModel.IIndexStringType<IProductAndRequests>;
   template: `
     <h3 class="reset state__header">Market demand <i class="pi pi-chart-line"></i></h3>
     <div class="ui-g">
-      <div class="ui-g-12" *ngIf="data$ | async as data">
+      <div class="ui-g-12" style="height: 180px !important" *ngIf="data$ | async as data">
         <ng-container *ngIf="data.length !== 0">
           <ngx-charts-line-chart
             [view]="view"
@@ -41,7 +41,7 @@ type TProductObject = fromModel.IIndexStringType<IProductAndRequests>;
 })
 export class MarketDemandComponent extends BaseComponent implements OnInit {
   data$: Observable<fromModel.TLineChartModel>;
-  view: any[] = [600, 300];
+  view: any[] = [600, 290];
   constructor(public store: Store) {
     super();
   }
@@ -51,8 +51,9 @@ export class MarketDemandComponent extends BaseComponent implements OnInit {
   ngOnInit(): void {
     this.data$ = this.run$.pipe(
       filter(run => run),
-      switchMap(() => combineLatest(this.productRequest$, this.products$)),
+      switchMap(() => combineLatest([this.productRequest$, this.products$])),
       map(([request, product]): TProductObject => this.mapToProductAndRequest(request, product)),
+      // REVIEW rxjs example how to store data in stream that show in chart
       scan((acc: TProductObject, curr: TProductObject): TProductObject => this.updateBuffer(acc, curr), {}),
       map(data => this.buildChartData(data))
     );
@@ -76,6 +77,7 @@ export class MarketDemandComponent extends BaseComponent implements OnInit {
       {}
     );
   }
+  // REVIEW ddd
   private trimArray(data: Array<fromModel.IProductRequest>): Array<fromModel.IProductRequest> {
     const size: number = 500;
     return data.length <= size ? data : data.slice(data.length - size, size);

@@ -31,9 +31,7 @@ export class DepartamentComponent implements OnInit {
   departamentId: fromModel.TDepartamentId;
   departament$: Observable<fromModel.IDepartamentGui>;
   lines$: Observable<Array<fromModel.ILineGui>>;
-  constructor(public store: Store) {
-    // console.log('tworze departament');
-  }
+  constructor(public store: Store) {}
 
   @Select(ProductionMenagmentState.containents$) containents$: Observable<fromModel.TContainentsIndex>;
   @Select(TickGeneratorState.run$) run$: Observable<boolean>;
@@ -45,7 +43,6 @@ export class DepartamentComponent implements OnInit {
     );
     this.lines$ = this.store.select(ProductionMenagmentState.productionLineLocalizations$).pipe(
       map(lines => lines.filter(line => line.departamentId === this.departamentId)),
-      // tap(lines => console.log('lindes changed: ', lines)),
       switchMap(lines => combineLatest(lines.map(line => this.store.selectInContext(BaseLineProductionState.dataToGui$, line.location))))
     );
   }

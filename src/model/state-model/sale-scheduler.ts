@@ -50,6 +50,7 @@ export interface IOfferModel extends IBaseState {
   rates: IOfferRatesModel;
 }
 export interface IOrderModel extends IBaseState {
+  // REVIEW js example index type declaration in storyge
   orders: TIndexOrderType;
   rates: IOrderRatesModel;
 }
