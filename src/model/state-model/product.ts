@@ -26,6 +26,7 @@ export interface IProduct {
 export type TProductArray = Array<IProduct>;
 export type TProductIndex = IIndexNumberType<IProduct>;
 export type TProductBufferIndex = IIndexStringType<number>;
+// REVIEW ngxs example model declaration
 export interface IProductModel {
   products: TProductIndex;
   buffers: TProductBufferIndex;

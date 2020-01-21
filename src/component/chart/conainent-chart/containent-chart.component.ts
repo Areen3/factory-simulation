@@ -4,8 +4,9 @@ import { Observable } from 'rxjs';
 import { filter, map, scan, switchMap } from 'rxjs/operators';
 import { BaseComponent } from 'src/component/base/base.component';
 import * as fromModel from 'src/model';
-import { MarketGeneratorState, ProductState, TickGeneratorState } from 'src/store';
+import { TickGeneratorState } from 'src/store';
 
+// REVIEW angular example of one binding to observale in template *ngIf="data$ | async as data">
 @Component({
   selector: 'app-containent-chart',
   styleUrls: ['./containent-chart.scss'],
@@ -30,10 +31,10 @@ export class ContainentChartComponent extends BaseComponent implements OnInit {
   constructor(public store: Store, protected actions$: Actions) {
     super();
   }
-  @Select(MarketGeneratorState.productRequest$) productRequest$: Observable<fromModel.TProductRequestArray>;
-  @Select(ProductState.productsArray$) products$: Observable<fromModel.TProductArray>;
+
   @Select(TickGeneratorState.run$) run$: Observable<boolean>;
   ngOnInit(): void {
+    // REVIEW angular example how to get data from observable without subscribing
     this.data$ = this.run$.pipe(
       filter(run => run),
       switchMap(() => this.actions$),

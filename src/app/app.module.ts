@@ -4,20 +4,18 @@ import { BrowserModule } from '@angular/platform-browser';
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgxsReduxDevtoolsPluginModule } from '@ngxs/devtools-plugin';
 import { NgxsModule, Store } from '@ngxs/store';
+import { NgxChartsModule } from '@swimlane/ngx-charts';
 import { ButtonModule } from 'primeng/button';
+import { CardModule } from 'primeng/card';
 import { ChartModule } from 'primeng/chart';
 import { CheckboxModule } from 'primeng/checkbox';
 import { DropdownModule } from 'primeng/dropdown';
+import { ProgressBarModule } from 'primeng/progressbar';
+import { RadioButtonModule } from 'primeng/radiobutton';
 import { SliderModule } from 'primeng/slider';
 import { SpinnerModule } from 'primeng/spinner';
 import { TableModule } from 'primeng/table';
 import { ToastModule } from 'primeng/toast';
-import { ProgressBarModule } from 'primeng/progressbar';
-import { RadioButtonModule } from 'primeng/radiobutton';
-import { CardModule } from 'primeng/card';
-import { NgxChartsModule } from '@swimlane/ngx-charts';
-import { create } from 'rxjs-spy';
-
 import * as fromComp from 'src/component';
 import {
   FirmState,
@@ -30,9 +28,7 @@ import {
   StaffState,
   TickGeneratorState
 } from 'src/store';
-
 import { AppComponent } from './app.component';
-import { Spy } from 'rxjs-spy/spy-interface';
 
 @NgModule({
   declarations: [
@@ -103,5 +99,5 @@ import { Spy } from 'rxjs-spy/spy-interface';
 })
 export class AppModule {
   public store: Store;
-  public spy: Spy = create();
+  // public spy: Spy = create();
 }

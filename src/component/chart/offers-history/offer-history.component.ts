@@ -20,6 +20,7 @@ export class OffersHistoryComponent implements OnInit {
   @Select(TickGeneratorState.run$) run$: Observable<boolean>;
   ngOnInit(): void {
     this.data = this.run$.pipe(
+      // REVIEW rxjs example how check if simulation runs and take disable components
       filter(run => run),
       switchMap(() => this.offers$),
       filter(offers => offers.length > 0),

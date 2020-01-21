@@ -35,6 +35,7 @@ export class ProductChartComponent extends BaseComponent implements OnInit {
       switchMap(() => this.actions$),
       ofActionSuccessful(fromModel.CompanyMenagmentAction.AddSaleFromLine),
       map((act: fromModel.CompanyMenagmentAction.AddSaleFromLine) => act.payload),
+      // REVIEW rxjs example how to store data in stream that show in chart
       scan((acc: Array<fromModel.IAdvancedPipeChartModel>, item): Array<fromModel.IAdvancedPipeChartModel> => {
         return item
           .map((elem): fromModel.IAdvancedPipeChartModel => ({ name: elem.product, value: elem.sale }))

@@ -2,9 +2,10 @@ import { TLineProductionId, TOrderId } from '../type';
 import { BaseActionWithPayload } from './base';
 import { EContinent } from '../state-model';
 import { SingleLocation } from '@ngxs/store';
-
+// REVIEW ngxs example how to ogranise actions
 export namespace CompanyMenagmentAction {
   enum Types {
+    // REVIEW ngxs example action command name convention
     updateFinance = 'cmd [CompanyMenagment] Update finance',
     budgetChange = 'cmd [CompanyMenagment] budget Change',
     expertModeChange = 'cmd [CompanyMenagment] expert mode Change',
@@ -49,6 +50,7 @@ export namespace CompanyMenagmentAction {
       super(data);
     }
   }
+  // REVIEW ngxs action with object parameters
   export interface IAddSaleFromLineData {
     orderId: TOrderId;
     lineId: TLineProductionId;

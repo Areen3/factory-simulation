@@ -37,6 +37,7 @@ export class MarketGeneratorState extends BaseState<fromModel.IMarketGeneratorMo
     const run$: Observable<boolean> = this.store.select(TickGeneratorState.run$);
     run$
       .pipe(
+        // REVIEW rxjs example tag stream to rxjs_spy
         tag('gen_market'),
         filter(run => run),
         switchMap(() => this.store.select(ProductState.productsArray$)),
@@ -62,6 +63,7 @@ export class MarketGeneratorState extends BaseState<fromModel.IMarketGeneratorMo
     const result: fromModel.SaleScheduleAction.INewOfferOnMarket = products
       .filter(item => item.active)
       .map(item => {
+        // REVIEW js example of math function to make random, sinus, range ...
         const requestItem = state.productRequest.find(productItem => productItem.productId === item.productId);
         const randomCount = Math.floor(item.maxMarketDemand * fromModel.getRandomRange(0.8, 1.2));
         const sinCount = (Math.sin(fromModel.toRadians(requestItem!.sinusDegrees)) + 1) / 2;

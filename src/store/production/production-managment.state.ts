@@ -2,7 +2,7 @@ import { Injectable, Type } from '@angular/core';
 import * as fromNGXS from '@ngxs/store';
 import { append, patch } from '@ngxs/store/operators';
 import { BehaviorSubject, combineLatest, concat, merge, Observable, of } from 'rxjs';
-import { filter, map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
+import { catchError, filter, map, switchMap, take, tap, withLatestFrom } from 'rxjs/operators';
 import { getStateNameForDepartament, getStateNameForLine } from 'src/model/utils/store';
 import * as fromModel from '../../model';
 import { BaseState } from '../base';
@@ -132,12 +132,15 @@ export class ProductionMenagmentState extends BaseState<fromModel.IProductionMan
         ctx.patchState({ productionLineLocalizations: state.productionLineLocalizations.filter(item => item.lineId !== action.payload) })
       ),
       switchMap(({ line, dep }) => {
+        // REVIEW ngxs example of removing part of store
         return combineLatest([of(dep), this.store.removeChildInLocalization(line!.location)]);
       }),
       take(1),
       switchMap(([dep]) =>
+        // REVIEW rxjs example how to transfer data in rxjs chain
         combineLatest([of(dep), this.store.dispatchInLocation(new fromModel.ProductionAction.RemoveLine(), dep!.localization)])
       ),
+      // REVIEW rxjs example of get data from combineLatest
       switchMap(([dep]) => {
         const state = ctx.getState();
         return state.productionLineLocalizations.find(item => item.departamentId === dep!.departamentId) === undefined
@@ -155,9 +158,9 @@ export class ProductionMenagmentState extends BaseState<fromModel.IProductionMan
     return of(ctx.getState()).pipe(
       map(state => {
         const depLocation = state.departamentLocalizations.find(item => item.departamentId === action.payload);
-        const dep = <fromModel.IDepartamentModel>(
-          this.store.getChildrenStateByName(depLocation!.localization.getParentPath(), action.payload)
-        );
+        const dep = <
+          fromModel.IDepartamentModel // REVIEW ngxs example of get part of state from location
+        >this.store.getChildrenStateByName(depLocation!.localization.getParentPath(), action.payload);
         return { depLocation, dep };
       }),
       switchMap(data => combineLatest([of(data), this.store.dispatch(new fromModel.ProductionAction.RemoveDepartament(data.dep))])),
@@ -179,25 +182,27 @@ export class ProductionMenagmentState extends BaseState<fromModel.IProductionMan
         filter(run => run),
         switchMap(() => this.actions$),
         fromNGXS.ofActionDispatched(fromModel.SaleScheduleAction.NewOfferAdded),
-        // tap(() => console.log('rozpoczałem')),
         map((offer: fromModel.SaleScheduleAction.NewOfferAdded) => offer.payload),
+        // REVIEW rxjs example of join another setream to main stream and example of semafor
         withLatestFrom(this.inProgressOffer$),
-        // tap(() => console.log('jestem')),
+        // REVIEW rxjs example of use join stream
         switchMap(([offer, inProgressOffer]) => {
+          // REVIEW rxjs example of divde steram
           return inProgressOffer ? this.rejectOffers(ctx, offer) : this.processNewOffer(ctx, offer);
-        })
+        }),
+        tap(() => this.inProgressOffer$.next(false))
       )
-      .subscribe(() => {
-        // console.log('zakończyłem');
-        // console.log('offer subs: ', item);
-      });
+      .subscribe(() => {});
   }
   processNewOffer(ctx: fromNGXS.StateContext<fromModel.IProductionManagmentModel>, offeres: Array<fromModel.IOffer>): Observable<any> {
     return of(offeres).pipe(
+      // REVIEW rxjs example of sending value to semafor
       tap(() => this.inProgressOffer$.next(true)),
       switchMap(off =>
+        // REVIEW rxjs example of processing array of stream orders
         concat(
           ...off.map(offer => {
+            // REVIEW rxjs example of nesting stream
             return of(true).pipe(
               map(() => {
                 // console.log('rozpoczałem', offer.offerId);
@@ -210,15 +215,14 @@ export class ProductionMenagmentState extends BaseState<fromModel.IProductionMan
                 return data;
               }),
               switchMap(data =>
+                // REVIEW rxjs example of making swich in steams
                 combineLatest([
                   this.havePosibilityDoWithExistingLine(offer, data),
                   this.havePosibilityToCreateNewLineWhitExistingDepartament(offer, data),
                   this.havePosibilityToCreateNewDepartamentAndNewLine(offer, data)
                 ]).pipe(
                   map(([doWithLine, doWithNewLine, doWithNewDep]) => ({ doWithLine, doWithNewLine, doWithNewDep })),
-                  // tap(i =>
-                  // console.log(offer.offerId, i.doWithLine.isPosibility, i.doWithNewLine.isPosibility, i.doWithNewDep.isPosibility)
-                  // ),
+                  // REVIEW rxjs example of making swich in steream - only one of merga can be successed
                   switchMap(obs =>
                     merge(
                       this.shoudRejectOffer(obs.doWithLine, obs.doWithNewLine, obs.doWithNewDep, offer).pipe(
@@ -235,15 +239,19 @@ export class ProductionMenagmentState extends BaseState<fromModel.IProductionMan
                       )
                     )
                   ),
+                  // REVIEW rxjs example of finish stream
                   take(1)
-                  // tap(() => console.log('skonczyłem'))
                 )
               )
             );
           })
         )
       ),
-      tap(() => this.inProgressOffer$.next(false))
+      tap(() => this.inProgressOffer$.next(false)),
+      catchError(() => {
+        this.inProgressOffer$.next(false);
+        return of(true);
+      })
     );
   }
 
@@ -253,11 +261,12 @@ export class ProductionMenagmentState extends BaseState<fromModel.IProductionMan
     doWithNewDep: IDoWithNewDepartament,
     offer: fromModel.IOffer
   ): Observable<IWhatShoudDoWithOffer> {
+    // REVIEW rxjs example of starting new stream
     return of({ doWithLine, doWithNewLine, doWithNewDep }).pipe(
+      // REVIEW rxjs example of making case in switch in stream -simple filter
       filter(doWith => {
         return !doWith.doWithLine.isPosibility && !doWith.doWithNewLine.isPosibility && !doWith.doWithNewDep.isPosibility;
       }),
-      // tap(res => console.log('będzie odrzucenie', res)),
       map((): IWhatShoudDoWithOffer => getEmptyWhatShoudDoWithOffer(offer))
     );
   }
@@ -265,11 +274,7 @@ export class ProductionMenagmentState extends BaseState<fromModel.IProductionMan
     offer: fromModel.IOffer,
     data: IDataConfiguration
   ): Observable<IDoWithNewLine> {
-    return of(data).pipe(
-      // map(() => lineThatTakeThisOffer(this.store, offer, this.store.getStateLocationByStateClass(ProductionMenagmentState), data)),
-      switchMap(() => havePosibilityToRunNewLine(this.store, offer, data))
-      // tap(item => console.log('new line', item.isPosibility))
-    );
+    return of(data).pipe(switchMap(() => havePosibilityToRunNewLine(this.store, offer, data)));
   }
 
   private shoudCreateNewLineWhitExistingDepartament(
@@ -278,14 +283,12 @@ export class ProductionMenagmentState extends BaseState<fromModel.IProductionMan
     offer: fromModel.IOffer,
     data: IDataConfiguration
   ): Observable<IWhatShoudDoWithOffer> {
-    // if (offer.offerId === '44/BMW RT') {
-    //   console.log('44');
-    // }
     return of({ doWithLine, doWithNewLine, offer, data }).pipe(
       filter(doWith => {
         return !doWith.doWithLine.isPosibility && doWith.doWithNewLine.isPosibility;
       }),
       map(
+        // REVIEW js example of declare return type from array function
         (result): IWhatShoudDoWithOffer => ({
           ...getEmptyWhatShoudDoWithOffer(offer),
           departementId: result.doWithNewLine.dep!.departamentId,
@@ -296,12 +299,12 @@ export class ProductionMenagmentState extends BaseState<fromModel.IProductionMan
   }
   private havePosibilityDoWithExistingLine(offer: fromModel.IOffer, data: IDataConfiguration): Observable<IDoWithLine> {
     return of(data).pipe(
-      // filter(({ lines }) => lines.length !== 0),
       map(({ lines }) => {
         return lines.length !== 0
           ? lineThatTakeThisOffer(this.store, offer, this.store.getStateLocationByStateClass(ProductionMenagmentState), data)
           : { isPosibility: false };
       })
+      // REVIEW rxjs example of logging in rxjs
       // tap(item => console.log('do with existing line', item.isPosibility))
     );
   }
@@ -311,9 +314,6 @@ export class ProductionMenagmentState extends BaseState<fromModel.IProductionMan
     offer: fromModel.IOffer,
     data: IDataConfiguration
   ): Observable<IWhatShoudDoWithOffer> {
-    // if (offer.offerId === '44/BMW RT') {
-    //   console.log('44');
-    // }
     return of({ doWithLine, data, offer }).pipe(
       filter(item => item.doWithLine.isPosibility),
       map(
@@ -329,11 +329,7 @@ export class ProductionMenagmentState extends BaseState<fromModel.IProductionMan
     offer: fromModel.IOffer,
     data: IDataConfiguration
   ): Observable<IDoWithNewDepartament> {
-    return havePosibilityToRunNewDepartament(this.store, offer, data)
-      .pipe
-      //
-      // tap(item => console.log('new departament', item.isPosibility))
-      ();
+    return havePosibilityToRunNewDepartament(this.store, offer, data);
   }
 
   private shoudCreateNewDepartamentAndNewLine(
@@ -379,14 +375,15 @@ export class ProductionMenagmentState extends BaseState<fromModel.IProductionMan
       map(product => ({ product: product, childName: getStateNameForLine(id, product) })),
       switchMap(({ product, childName }) => {
         const stateType: Type<BaseLineProductionState> = getLineProduction(product.productKind);
-        return combineLatest(
+        return combineLatest([
           of({ product, stateName: childName, location: fromNGXS.SingleLocation.getLocation(whatToDo.localization.path, childName) }),
+          // REVIEW ngxs example how to add new state in localization
           this.store.addChildInLocalization(stateType, whatToDo.localization, { childName, context: product.productKind })
-        );
+        ]);
       }),
       map(([{ product, stateName, location }]) => ({ product, stateName, location })),
       switchMap(({ product, stateName, location: localization }) =>
-        combineLatest(
+        combineLatest([
           of({ product, stateName, localization }),
           this.store.dispatchInLocation(
             new fromModel.ProductionAction.InitLineProductionData({
@@ -398,7 +395,7 @@ export class ProductionMenagmentState extends BaseState<fromModel.IProductionMan
             localization
           ),
           this.store.dispatchInLocation(new fromModel.ProductionAction.AddLine(), whatToDo.localization)
-        )
+        ])
       ),
       map(([{ product, stateName, localization }]) => {
         ctx.patchState({
@@ -417,7 +414,6 @@ export class ProductionMenagmentState extends BaseState<fromModel.IProductionMan
           whatDo: EWhatShoudDoWithOffer.doWithExistingLine
         })
       )
-      // tap(() => console.log('utworzono nową linie'))
     );
   }
 
@@ -425,10 +421,8 @@ export class ProductionMenagmentState extends BaseState<fromModel.IProductionMan
     ctx: fromNGXS.StateContext<fromModel.IProductionManagmentModel>,
     whatToDo: IWhatShoudDoWithOffer
   ): Observable<IWhatShoudDoWithOffer> {
-    // if (whatToDo.offer.offerId === '7/BMW RT') {
-    //   console.log('44');
-    // }
     return of(whatToDo).pipe(
+      // REVIEW ngxs example of using parameterized  selector
       switchMap(data => combineLatest([of(data), this.store.select(ProductState.getProduct$).pipe(map(fun => fun(data.offer.productId)))])),
       switchMap(([data, product]) =>
         combineLatest([
@@ -468,20 +462,19 @@ export class ProductionMenagmentState extends BaseState<fromModel.IProductionMan
       switchMap(() => this.store.select(ProductState.productsArray$)),
       map(product => product.find(item => item.productId === whatToDo.offer.productId)),
       switchMap(() =>
-        combineLatest(
-          this.store.dispatchInLocation(
-            new fromModel.ProductionAction.InitDepartamentData({
-              continent: whatToDo.continent,
-              deparamentId: childName,
-              employment: 10
-            }),
-            childLocation
-          )
+        this.store.dispatchInLocation(
+          new fromModel.ProductionAction.InitDepartamentData({
+            continent: whatToDo.continent,
+            deparamentId: childName,
+            employment: 10
+          }),
+          childLocation
         )
       ),
       map(
         (): fromNGXS.SingleLocation => {
           ctx.setState(
+            // REVIEW ngxs example how to append element to array using operators
             patch({
               departamentLocalizations: append([{ departamentId: childName, localization: childLocation }])
             })
@@ -498,7 +491,6 @@ export class ProductionMenagmentState extends BaseState<fromModel.IProductionMan
         })
       ),
       map(result => result)
-      // tap(() => console.log('utworzono nowy departament'))
     );
   }
 }

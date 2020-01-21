@@ -28,7 +28,6 @@ export class DepartamentState extends BaseState<fromModel.IDepartamentModel> {
   }
   @Selector()
   static dataToGui$(state: fromModel.IDepartamentModel): fromModel.IDepartamentGui {
-    // console.log(`odpalono selektor dataToGui`);
     return { openLines: state.openLines, continent: state.continent, departamentId: state.departamentId, employment: state.employment };
   }
 

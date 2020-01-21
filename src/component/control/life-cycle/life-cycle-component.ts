@@ -24,6 +24,7 @@ export class LifeCycleComponent extends BaseComponent implements OnInit {
   budgetStart: number = 5000000;
   ngOnInit(): void {
     this.buffer$ = this.store.select(ProductState.buffers$);
+    // REVIEW ngxs example how to dispatch action from component
     this.store.dispatch(new fromModel.TickAction.ChangeSpeed(this.timeSpeed));
     this.store.dispatch(new fromModel.CompanyMenagmentAction.BudgetChange(this.budgetStart));
   }

@@ -11,20 +11,22 @@ import { BaseLineProductionState, ProductionMenagmentState, TickGeneratorState }
   template: `
     <!-- <p class="reset style__p"></p> -->
     <ng-container *ngIf="line !== undefined">
-      <div class="ui-g">
-        <div class="ui-g-2">
+      <div class="ui-g line__center">
+        <div class="ui-g-3">
           <!-- <span class="style__span">{{ line.lineId }}: {{ line.productionCapacity - line.freeCapacity }}/{{ line.productionCapacity }}:</span> -->
-          <span class="style__span"
+          <span class="span__line"
             >{{ line.lineId }}: {{ line.productionCapacity - line.freeCapacity }}/{{ line.productionCapacity }}:</span
           >
         </div>
         <ng-container *ngIf="inProduces$ | async as inProduces">
           <ng-container *ngIf="inProduces !== undefined">
-            <ng-container *ngFor="let inProduce of inProduces | keyvalue">
-              <div class="ui-g-2">
-                <app-in-progress [inProgress]="inProduce.value"></app-in-progress>
-              </div>
-            </ng-container>
+            <div class="ui-g-9 ui-g-nopad">
+              <ng-container *ngFor="let inProduce of inProduces | keyvalue">
+                <div class="ui-g-1" style="padding: 3px !important">
+                  <app-in-progress [inProgress]="inProduce.value"></app-in-progress>
+                </div>
+              </ng-container>
+            </div>
           </ng-container>
         </ng-container>
       </div>

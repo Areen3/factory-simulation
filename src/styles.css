@@ -2,6 +2,7 @@
 
 body {
   margin: 0px;
+  background-color: #bae8e8;
 }
 
 body * {
@@ -89,7 +90,11 @@ span {
 }
 
 .ui-table-scrollable-header-box {
-  margin-right: 17px !important;
+  margin-right: 0px !important;
+}
+
+.ui-table-scrollable-header {
+  overflow-y: scroll !important;
 }
 
 td {
@@ -115,7 +120,7 @@ h3 {
 }
 
 .ui-progressbar .ui-progressbar-value {
-  background: #ff8c69 !important;
+  background: rgb(168, 56, 93) !important;
 }
 
 .ui-progressbar {
@@ -143,4 +148,20 @@ label {
   display: flex;
   justify-content: center;
   align-items: center;
+}
+
+.line__center {
+  display: flex;
+  justify-content: right;
+  align-items: center;
+}
+
+.bold {
+  font-weight: bold;
+}
+
+.span__line {
+  font-weight: bold;
+  font-size: 0.409em;
+  display: flex;
 }

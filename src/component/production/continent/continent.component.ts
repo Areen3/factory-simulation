@@ -26,16 +26,11 @@ export class ContinentComponent implements OnInit, OnDestroy {
   continent: fromModel.IContainent;
   linesCount$: Observable<number>;
   departaments$: Observable<Array<fromModel.IDepartamentGui>>;
-  constructor(public store: Store) {
-    // console.log('kontytnent utworzony');
-  }
+  constructor(public store: Store) {}
 
   @Select(TickGeneratorState.run$) run$: Observable<boolean>;
-  ngOnDestroy(): void {
-    // console.log('tworze on destroy');
-  }
+  ngOnDestroy(): void {}
   ngOnInit(): void {
-    // console.log('tworze on init');
     this.departaments$ = this.store.select(ProductionMenagmentState.departamentLocalizations$).pipe(
       distinctUntilChanged((a, b) => {
         return JSON.stringify(a) === JSON.stringify(b);

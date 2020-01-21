@@ -14,18 +14,23 @@ const initialFirmDataModel: fromModel.IFirmModel = {
   financeHistory: []
 };
 
+// REVIEW ngxs example decorator @state
 @State<fromModel.IFirmModel>({
   name: 'FirmState',
   defaults: initialFirmDataModel,
+  // REVIEW ngxs example static child state
   children: [StaffState]
 })
+// REVIEW ngxs example injection of state, useful for dynamic create without write it in forRoot
 @Injectable({
   providedIn: 'root'
 })
+// REVIEW ngxs example state that inherited from base
 export class FirmState extends BaseState<fromModel.IFirmModel> {
   constructor(protected store: Store) {
     super(store);
   }
+  // REVIEW ngxs example simple decorator @selector
   @Selector()
   static actualProfits$(state: fromModel.IFirmModel): number {
     return state.actualProfits;
@@ -38,13 +43,16 @@ export class FirmState extends BaseState<fromModel.IFirmModel> {
   static ekspertMode$(state: fromModel.IFirmModel): boolean {
     return state.expertMode;
   }
+  // REVIEW ngxs example decorator @state, useful for return all state but dengerous beacuse it monitoring all changes in children
   @Selector()
   static state$<T>(state: T): T {
     return state;
   }
+  // REVIEW ngxs example decorator @action
   @Action(fromModel.CompanyMenagmentAction.UpdateFinance)
   updateFinance(ctx: StateContext<fromModel.IFirmModel>, action: fromModel.CompanyMenagmentAction.UpdateFinance): void {
     const state = ctx.getState();
+    // REVIEW ngxs example for changing state
     ctx.patchState({
       actualCosts: state.actualCosts + action.payload.actualCosts,
       actualProfits: state.actualSale + action.payload.actualSale - (state.actualCosts + action.payload.actualCosts) + state.budget,
@@ -78,10 +86,12 @@ export class FirmState extends BaseState<fromModel.IFirmModel> {
       };
       return finHistory;
     });
+    // REVIEW js example of joining tables
     const sumFinance = state.financeHistory.concat(newFinance);
     ctx.patchState({
       financeHistory: sumFinance.length <= 100 ? sumFinance : sumFinance.slice(sumFinance.length - 100, 100)
     });
+    // REVIEW js example of simple sum array
     const actualCosts: number = newFinance.reduce((acc, curr) => acc + curr.costSummary, 0);
     return ctx.dispatch(new fromModel.CompanyMenagmentAction.UpdateFinance({ actualCosts, actualSale: 0 }));
   }
@@ -100,8 +110,10 @@ export class FirmState extends BaseState<fromModel.IFirmModel> {
       };
       return finHistory;
     });
+    // REVIEW js example of joining tables by spread
     ctx.patchState({ financeHistory: [...state.financeHistory, ...newFinance] });
     const actualSale: number = newFinance.reduce((acc, curr) => acc + curr.sale, 0);
+    // REVIEW ngxs example of return observable action, system wil wait for execute these action
     return ctx.dispatch(new fromModel.CompanyMenagmentAction.UpdateFinance({ actualCosts: 0, actualSale }));
   }
 }

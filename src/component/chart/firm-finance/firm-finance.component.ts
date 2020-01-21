@@ -1,12 +1,12 @@
-import { Component, OnInit, ChangeDetectionStrategy } from '@angular/core';
+import { ChangeDetectionStrategy, Component, OnInit } from '@angular/core';
 import { Select, Store } from '@ngxs/store';
 import { MessageService } from 'primeng/api';
 import { Observable } from 'rxjs';
+import { tag } from 'rxjs-spy/operators';
 import { filter, switchMap } from 'rxjs/operators';
 import { BaseComponent } from 'src/component/base/base.component';
 import * as fromModel from 'src/model';
-import { FirmState, OrderState, TickGeneratorState } from 'src/store';
-import { tag } from 'rxjs-spy/operators';
+import { FirmState, TickGeneratorState } from 'src/store';
 
 @Component({
   selector: 'app-firm-finance',
@@ -22,16 +22,12 @@ export class FirmFinanceComponent extends BaseComponent implements OnInit {
   constructor(public store: Store, private messageService: MessageService) {
     super();
   }
-
-  @Select(OrderState.rates$) rates$: Observable<fromModel.IOrderRatesModel>;
-  @Select(TickGeneratorState.run$) run$: Observable<boolean>;
   @Select(TickGeneratorState.duration$) duration$: Observable<number>;
   ngOnInit(): void {
     const loc = this.store.getStateLocationByStateClass(FirmState);
     this.firmModel$ = this.store.selectInContext(FirmState.state$, loc);
     this.checkFinanse();
     this.actualBudget$ = this.store.selectInContext(FirmState.actualBudget$, this.store.getStateLocationByStateClass(FirmState));
-    // .pipe(tap(item => console.log('zmiana budżetu')));
   }
   private checkFinanse(): void {
     this.subscriptons.add(

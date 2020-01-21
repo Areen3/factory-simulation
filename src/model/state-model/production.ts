@@ -67,7 +67,8 @@ export interface ICarProductionLineModel extends IBaseProductionLineModel {}
 export interface IVanProductionLineModel extends IBaseProductionLineModel {}
 
 export interface ILineGui
-  extends Pick<IBaseProductionLineModel, 'lineId' | 'productId' | 'productionCapacity' | 'freeCapacity' | 'numberOfParallelProduction'> {}
+  extends // REVIEW js example of pick type using
+  Pick<IBaseProductionLineModel, 'lineId' | 'productId' | 'productionCapacity' | 'freeCapacity' | 'numberOfParallelProduction'> {}
 
 export interface IDepartamentModel {
   employment: number;

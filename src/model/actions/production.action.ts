@@ -1,6 +1,6 @@
 import { EContinent, IContainent, IOrder, IProduct, IDepartamentModel } from '../state-model';
 import { TDepartamentId, TLineProductionId, TOrderId, TProductId } from '../type';
-import { BaseAction, BaseActionWithPayload } from './base';
+import { BaseActionWithPayload, BaseAction } from './base';
 
 export namespace ProductionAction {
   enum Types {

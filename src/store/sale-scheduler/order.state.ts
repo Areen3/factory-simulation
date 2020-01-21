@@ -5,6 +5,7 @@ import { BaseState, initialBaseStateDataModel } from '../base';
 
 const initialOrderDataModel: fromModel.IOrderModel = {
   ...initialBaseStateDataModel,
+  // REVIEW js example index type declaration in default
   orders: {},
   rates: { finished: 0, inProgress: 0, new: 0 }
 };
@@ -41,6 +42,7 @@ export class OrderState extends BaseState<fromModel.IOrderModel> {
         const order: fromModel.IOrder = {
           ...state.orders[item.orderId],
           qantityMade: item.made,
+          // REVIEW js example index type using
           qantityRemainded: state.orders[item.orderId].quantityPlanned - item.made
         };
         return order;

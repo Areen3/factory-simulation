@@ -4,7 +4,7 @@ import { EProductKind } from '../../model/state-model';
 import { BaseLineProductionState } from './base-line.state';
 
 const LINE_PRODUCTION_CLASS_REGISTRY = new Map<EProductKind, Type<BaseLineProductionState>>();
-
+// REVIEW angular example of decorator
 export function registerLineProduction(productKind: EProductKind): Function {
   return function(target: Type<BaseLineProductionState>): void {
     const exist: Type<BaseLineProductionState> | undefined = getLineProduction(productKind, false);
