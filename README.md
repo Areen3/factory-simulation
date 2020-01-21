@@ -69,7 +69,7 @@ Do oznaczania w kodzie elementów użyłem // REVIEW
 możesz znaleźć w kodzie wskazany element albo przez toolbar z lewej strony albo przez wyszukanie ciągu znaków // REVIEW
 w review zanajdziesz zarówno elementy proste jak i trudniejsze
 
-**ENG**:The goal of the project is to create an example application that demonstrates the capabilities of tools such as ngxs, rxjs in the area of dynamically created store.
+## **ENG**:The goal of the project is to create an example application that demonstrates the capabilities of tools such as ngxs, rxjs in the area of dynamically created store.
 Specifically, the project focuses on:
 
 - **ngxs** - demonstrating how to use it in general, with an emphasis on dynamic creation and removal of store fragments;
