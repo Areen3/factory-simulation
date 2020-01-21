@@ -25,10 +25,10 @@ wykonywać zamówienia równolegle. Główna pętla systemu to
 6.  na zwolnione miejce w produkcji wpada następne zamówienie
 7.  Centrala monitoruje stan kasy firmy i albo wszyskto jest ok i zarabiasz albo tracisz, jak braknie kasy stajesz się bankrutem
 
-model uml fabryki znajduje się pod adresem: [uml](https://areen3.github.io/factory-simulation/).
-plik narzęcia case (Enterprice Architect jest pod adresem): [case](https://areen3.github.io/factory-simulation/factory-simulation.eapx)
+model uml fabryki znajduje się pod adresem: [uml](https://areen3.github.io/ngxsFactoryDocumentation/uml/index.htm).
+plik narzęcia case (Enterprice Architect jest pod adresem): [case](https://github.com/Areen3/ngxsFactoryDocumentation/raw/master/docs/case/factory-simulation.eapx)
 (model procesów jeste jeszcze do poprawy)
-przykład w formie filmu wraz z wytłumaczeniem znajduje się [here]()
+przykład w formie filmu wraz z wytłumaczeniem znajduje się [here](https://github.com/Areen3/ngxsFactoryDocumentation/raw/master/docs/movi/fsexplain.mp4)
 
 ## Możliwości sterowania fabryką w czasie rzeczywistym (zmniejszenie powoduje wygaszanie w czasie tego co zmniejszamy)
 
@@ -69,7 +69,8 @@ Do oznaczania w kodzie elementów użyłem // REVIEW
 możesz znaleźć w kodzie wskazany element albo przez toolbar z lewej strony albo przez wyszukanie ciągu znaków // REVIEW
 w review zanajdziesz zarówno elementy proste jak i trudniejsze
 
-**ENG**:The goal of the project is to create an example application that demonstrates the capabilities of tools such as ngxs, rxjs in the area of dynamically created store.
+## **ENG**:The goal of the project is to create an example application that demonstrates the capabilities of tools such as ngxs, rxjs in the area of dynamically created store.
+
 Specifically, the project focuses on:
 
 - **ngxs** - demonstrating how to use it in general, with an emphasis on dynamic creation and removal of store fragments;
@@ -94,9 +95,9 @@ The main process is as follows:
 6.  After the order production is finished, the next order production starts on the same line.
 7.  The headquarters are constatntly monitoring the state of the company's finances - and either everything is going well and the factory is earning money or they are loosing cash and will soon become a bankrupt.
 
-The factory UML model is available at:[uml](https://areen3.github.io/factory-simulation/).
-The Enterprise Architect case file is available at: [case](https://areen3.github.io/factory-simulation/factory-simulation.eapx)
-Example movie with explenation is available at: [here]()
+The factory UML model is available at:[uml](https://areen3.github.io/ngxsFactoryDocumentation/uml/index.htm).
+The Enterprise Architect case file is available at: [case](https://github.com/Areen3/ngxsFactoryDocumentation/raw/master/docs/case/factory-simulation.eapx)
+Example movie with explenation is available at: [here](https://github.com/Areen3/ngxsFactoryDocumentation/raw/master/docs/movi/fsexplain.mp4)
 
 ## Possibility to control the factory in real time
 
