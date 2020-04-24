@@ -97,19 +97,46 @@ export class RangeLocations {
 
   private checkLocation() {
     if (this.locationKind === ELocationKind.byLocation)
-      throw new Error(`You can run function setLocationToParent only with LocationKind === byLocation`);
+      throw new Error(
+        `You can run function setLocationToParent only with LocationKind === byLocation`
+      );
   }
 
   private validate(): ELocationKind {
-    if (this._name !== '' && this._path === '' && this._context === '' && this._searchInTree === false)
+    if (
+      this._name !== '' &&
+      this._path === '' &&
+      this._context === '' &&
+      this._searchInTree === false
+    )
       return ELocationKind.byName;
-    if (this._name === '' && this._path !== '' && this._context === '' && this._searchInTree === false)
+    if (
+      this._name === '' &&
+      this._path !== '' &&
+      this._context === '' &&
+      this._searchInTree === false
+    )
       return ELocationKind.byLocation;
-    if (this._name !== '' && this._path === '' && this._context !== '' && this._searchInTree === false)
+    if (
+      this._name !== '' &&
+      this._path === '' &&
+      this._context !== '' &&
+      this._searchInTree === false
+    )
       return ELocationKind.byContext;
-    if (this._name !== '' && this._path !== '' && this._context === '' && this._searchInTree === true)
+    if (
+      this._name !== '' &&
+      this._path !== '' &&
+      this._context === '' &&
+      this._searchInTree === true
+    )
       return ELocationKind.byPathTree;
-    if (this._name !== '' && this._path !== '' && this._context !== '' && this._searchInTree === true)
+    if (
+      this._name !== '' &&
+      this._path !== '' &&
+      this._context !== '' &&
+      this._searchInTree === true
+    )
       return ELocationKind.byContextInPath;
     throw new Error('Wrong combination of serarch parametres in RangeLocations');
   }

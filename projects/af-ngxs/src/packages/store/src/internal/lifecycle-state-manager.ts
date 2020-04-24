@@ -39,7 +39,9 @@ export class LifecycleStateManager {
 
       if (instance.ngxsOnChanges) {
         const currentAppState: PlainObject = {};
-        const newAppState: PlainObject = this.internalStateOperations.getRootStateOperations().getState();
+        const newAppState: PlainObject = this.internalStateOperations
+          .getRootStateOperations()
+          .getState();
 
         const firstDiffChange: NgxsSimpleChange = getStateDiffChanges(mappedStore, {
           currentAppState,

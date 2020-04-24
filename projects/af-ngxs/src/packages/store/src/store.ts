@@ -8,7 +8,13 @@ import { NgxsAction } from './actions/base.action';
 import { RangeLocations, SingleLocation } from './common';
 import { CONFIG_MESSAGES, VALIDATION_CODE } from './configs/messages.config';
 import { InternalNgxsExecutionStrategy } from './execution/internal-ngxs-execution-strategy';
-import { getSelectorMetadata, MappedStore, SelectorMetaDataModel, StateClassInternal, StateOperations } from './internal/internals';
+import {
+  getSelectorMetadata,
+  MappedStore,
+  SelectorMetaDataModel,
+  StateClassInternal,
+  StateOperations
+} from './internal/internals';
 import { LifecycleStateManager } from './internal/lifecycle-state-manager';
 import { StateFactory } from './internal/state-factory';
 import { InternalStateOperations } from './internal/state-operations';
@@ -115,7 +121,8 @@ export class Store {
 
   private getStoreBoundSelectorFn(selector: any) {
     const seletorMDModel: SelectorMetaDataModel = getSelectorMetadata(selector);
-    const location: SingleLocation | undefined = seletorMDModel === undefined ? undefined : seletorMDModel.location;
+    const location: SingleLocation | undefined =
+      seletorMDModel === undefined ? undefined : seletorMDModel.location;
     const makeSelectorFn = getRootSelectorFactory(selector);
     const runtimeContext = this._stateFactory.getRuntimeSelectorContext(location);
     return makeSelectorFn(runtimeContext);
@@ -126,7 +133,9 @@ export class Store {
     const storeIsEmpty: boolean = !value || Object.keys(value).length === 0;
     if (storeIsEmpty) {
       const defaultStateNotEmpty: boolean = Object.keys(this._config.defaultsState).length > 0;
-      const storeValues: PlainObject = defaultStateNotEmpty ? { ...this._config.defaultsState, ...initialStateValue } : initialStateValue;
+      const storeValues: PlainObject = defaultStateNotEmpty
+        ? { ...this._config.defaultsState, ...initialStateValue }
+        : initialStateValue;
 
       this._stateStream.next(storeValues);
     }
@@ -136,7 +145,10 @@ export class Store {
    * Allows to dispatch action with State Location specified, so we can specifiy on which part of
    * State data tree we want action to work
    */
-  dispatchInLocation(event: NgxsAction | NgxsAction[], location: SingleLocation | RangeLocations): Observable<any> {
+  dispatchInLocation(
+    event: NgxsAction | NgxsAction[],
+    location: SingleLocation | RangeLocations
+  ): Observable<any> {
     const locationsToSend: SingleLocation[] =
       location instanceof RangeLocations
         ? this._stateFactory.getLocations(<RangeLocations>(<unknown>location))
@@ -144,7 +156,10 @@ export class Store {
     const eventArray = Array.isArray(event) ? [...event] : [event];
     const eventToSend: NgxsAction[] = eventArray
       .map((eventItem): NgxsAction[] =>
-        locationsToSend.map((locationItem): NgxsAction => Object.assign(Object.create(eventItem), { ...eventItem, location: locationItem }))
+        locationsToSend.map(
+          (locationItem): NgxsAction =>
+            Object.assign(Object.create(eventItem), { ...eventItem, location: locationItem })
+        )
       )
       .reduce((acc, curr) => [...acc, ...curr], []);
     return this._internalStateOperations.getRootStateOperations().dispatch(eventToSend);
@@ -153,9 +168,15 @@ export class Store {
    * Select a observable slice of store from specified location
    */
   selectInContext(selector: any, location: SingleLocation): Observable<any> {
-    const seletorMDModel: SelectorMetaDataModel = StoreValidators.getValidSelectorMeta(selector);
+    const seletorMDModel: SelectorMetaDataModel = StoreValidators.getValidSelectorMeta(
+      selector
+    );
     const containerClass = seletorMDModel.containerClass;
-    const selectorFn = this._stateFactory.getSelectorFromState(containerClass, seletorMDModel.originalFn, location);
+    const selectorFn = this._stateFactory.getSelectorFromState(
+      containerClass,
+      seletorMDModel.originalFn,
+      location
+    );
     return this.select(selectorFn);
   }
 
@@ -169,9 +190,15 @@ export class Store {
    */
 
   selectSnapshotInContext(selector: any, location: SingleLocation): any {
-    const seletorMDModel: SelectorMetaDataModel = StoreValidators.getValidSelectorMeta(selector);
+    const seletorMDModel: SelectorMetaDataModel = StoreValidators.getValidSelectorMeta(
+      selector
+    );
     const containerClass = seletorMDModel.containerClass;
-    const selectorFn = this._stateFactory.getSelectorFromState(containerClass, seletorMDModel.originalFn, location);
+    const selectorFn = this._stateFactory.getSelectorFromState(
+      containerClass,
+      seletorMDModel.originalFn,
+      location
+    );
     const selectorFnWraped = this.getStoreBoundSelectorFn(selectorFn);
     return selectorFnWraped(this._stateStream.getValue());
   }
@@ -185,7 +212,10 @@ export class Store {
       .filter(p => p.path.split('.').length - 1 === parentLevel)
       .map(p => ({
         name: SingleLocation.getLocation(p.path).getParentName(),
-        state: getValue(this._internalStateOperations.getRootStateOperations().getState(), p.path)
+        state: getValue(
+          this._internalStateOperations.getRootStateOperations().getState(),
+          p.path
+        )
       }));
     return states;
   }
@@ -232,7 +262,9 @@ export class Store {
     const stateOperations = this._internalStateOperations.getRootStateOperations();
     const childMeta = StoreValidators.getValidStateMeta(child);
     const mappedStores: MappedStore[] = [];
-    params.childName = !params.childName ? (params.childName = childMeta.name!) : params.childName;
+    params.childName = !params.childName
+      ? (params.childName = childMeta.name!)
+      : params.childName;
     params.context = !params.context ? (params.context = '') : params.context;
     mappedStores.push(
       ...this.addChildInternal(child, params.childName, stateOperations, location, {
@@ -262,7 +294,9 @@ export class Store {
    * Searches for state with given name added in root path and returns path to that state
    */
   getStateLocationInPath(root: SingleLocation, stateName: string): SingleLocation {
-    const state = this._stateFactory.states.find(p => p.path.startsWith(root.path) && p.name === stateName);
+    const state = this._stateFactory.states.find(
+      p => p.path.startsWith(root.path) && p.name === stateName
+    );
     if (!state) throw new Error(CONFIG_MESSAGES[VALIDATION_CODE.STATE_NOT_FOUND](stateName));
     return SingleLocation.getLocation(state.path);
   }
@@ -315,7 +349,15 @@ export class Store {
     // if state has set children[] states, children of child, also need to be initiated
     if (children)
       children.forEach((item: any) =>
-        mappedStores.push(...this.addChildInternal(item, item[META_KEY].name, stateOperations, SingleLocation.getLocation(path), params))
+        mappedStores.push(
+          ...this.addChildInternal(
+            item,
+            item[META_KEY].name,
+            stateOperations,
+            SingleLocation.getLocation(path),
+            params
+          )
+        )
       );
 
     return mappedStores;
